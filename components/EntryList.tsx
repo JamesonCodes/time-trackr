@@ -172,17 +172,27 @@ export default function EntryList({
             </div>
           )}
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {groupedEntries[date].map(entry => (
-              <div key={entry.id} style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '12px 16px',
-                backgroundColor: '#374151',
-                border: '1px solid #4b5563',
-                borderRadius: '8px'
-              }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {groupedEntries[date].map(entry => (
+                  <div key={entry.id} style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '16px 20px',
+                    backgroundColor: '#374151',
+                    border: '1px solid #4b5563',
+                    borderRadius: '8px',
+                    transition: 'all 0.2s ease',
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#4b5563'
+                    e.currentTarget.style.borderColor = '#6b7280'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = '#374151'
+                    e.currentTarget.style.borderColor = '#4b5563'
+                  }}>
                 {editingEntry === entry.id ? (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1 }}>
                     {/* Project Selector */}
@@ -291,81 +301,119 @@ export default function EntryList({
                   </div>
                 ) : (
                   <>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1 }}>
-                      {/* Project Badge */}
-                      <div
-                        style={{
-                          padding: '4px 8px',
-                          borderRadius: '4px',
-                          fontSize: '12px',
-                          fontWeight: '500',
-                          backgroundColor: getProjectColor(entry.projectId),
-                          color: 'white',
-                          minWidth: '80px',
-                          textAlign: 'center'
-                        }}
-                      >
-                        {getProjectName(entry.projectId)}
-                      </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1 }}>
+                          {/* Project Badge */}
+                          <div
+                            style={{
+                              padding: '6px 12px',
+                              borderRadius: '6px',
+                              fontSize: '12px',
+                              fontWeight: '600',
+                              backgroundColor: getProjectColor(entry.projectId),
+                              color: 'white',
+                              minWidth: '90px',
+                              textAlign: 'center',
+                              textTransform: 'uppercase',
+                              letterSpacing: '0.05em'
+                            }}
+                          >
+                            {getProjectName(entry.projectId)}
+                          </div>
 
-                      {/* Time Range */}
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: '200px' }}>
-                        <span style={{ fontSize: '14px', color: '#d1d5db' }}>
-                          {formatTime(entry.startTs)} - {entry.endTs ? formatTime(entry.endTs) : 'Running'}
-                        </span>
-                      </div>
+                          {/* Time Range */}
+                          <div style={{ minWidth: '180px' }}>
+                            <div style={{ 
+                              fontSize: '14px', 
+                              fontWeight: '500',
+                              color: '#f9fafb',
+                              marginBottom: '2px'
+                            }}>
+                              {formatTime(entry.startTs)} - {entry.endTs ? formatTime(entry.endTs) : 'Running'}
+                            </div>
+                            <div style={{
+                              fontSize: '12px',
+                              color: '#9ca3af'
+                            }}>
+                              {entry.endTs ? formatDuration(calculateDuration(entry.startTs, entry.endTs)) : 'Running...'}
+                            </div>
+                          </div>
 
-                      {/* Duration */}
-                      <div style={{ minWidth: '80px' }}>
-                        <span style={{
-                          fontFamily: 'monospace',
-                          fontSize: '14px',
-                          fontWeight: '500',
-                          color: '#f9fafb'
-                        }}>
-                          {entry.endTs ? formatDuration(calculateDuration(entry.startTs, entry.endTs)) : 'Running...'}
-                        </span>
-                      </div>
-
-                      {/* Note */}
-                      {entry.note && (
-                        <div style={{ flex: 1, minWidth: '120px' }}>
-                          <span style={{ fontSize: '14px', color: '#9ca3af' }}>
-                            {entry.note}
-                          </span>
+                          {/* Note */}
+                          {entry.note && (
+                            <div style={{ flex: 1, minWidth: '120px' }}>
+                              <div style={{ 
+                                fontSize: '14px', 
+                                color: '#d1d5db',
+                                fontWeight: '400'
+                              }}>
+                                {entry.note}
+                              </div>
+                            </div>
+                          )}
                         </div>
-                      )}
-                    </div>
 
-                    {/* Action Buttons */}
-                    <div style={{ display: 'flex', gap: '4px' }}>
-                      <button
-                        onClick={() => handleEdit(entry)}
-                        style={{
-                          padding: '6px',
-                          backgroundColor: 'transparent',
-                          border: '1px solid #4b5563',
-                          borderRadius: '4px',
-                          color: '#9ca3af',
-                          cursor: 'pointer'
+                        {/* Action Buttons */}
+                        <div style={{ 
+                          display: 'flex', 
+                          gap: '6px',
+                          opacity: '0.6',
+                          transition: 'opacity 0.2s ease'
                         }}
-                      >
-                        <Edit size={14} />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(entry.id)}
-                        style={{
-                          padding: '6px',
-                          backgroundColor: 'transparent',
-                          border: '1px solid #4b5563',
-                          borderRadius: '4px',
-                          color: '#ef4444',
-                          cursor: 'pointer'
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.opacity = '1'
                         }}
-                      >
-                        <Trash2 size={14} />
-                      </button>
-                    </div>
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.opacity = '0.6'
+                        }}>
+                          <button
+                            onClick={() => handleEdit(entry)}
+                            style={{
+                              padding: '8px',
+                              backgroundColor: 'transparent',
+                              border: '1px solid #6b7280',
+                              borderRadius: '6px',
+                              color: '#9ca3af',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s ease'
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.backgroundColor = '#4b5563'
+                              e.currentTarget.style.borderColor = '#9ca3af'
+                              e.currentTarget.style.color = '#f9fafb'
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.backgroundColor = 'transparent'
+                              e.currentTarget.style.borderColor = '#6b7280'
+                              e.currentTarget.style.color = '#9ca3af'
+                            }}
+                          >
+                            <Edit size={16} />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(entry.id)}
+                            style={{
+                              padding: '8px',
+                              backgroundColor: 'transparent',
+                              border: '1px solid #6b7280',
+                              borderRadius: '6px',
+                              color: '#9ca3af',
+                              cursor: 'pointer',
+                              transition: 'all 0.2s ease'
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.backgroundColor = '#dc2626'
+                              e.currentTarget.style.borderColor = '#ef4444'
+                              e.currentTarget.style.color = 'white'
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.backgroundColor = 'transparent'
+                              e.currentTarget.style.borderColor = '#6b7280'
+                              e.currentTarget.style.color = '#9ca3af'
+                            }}
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
                   </>
                 )}
               </div>

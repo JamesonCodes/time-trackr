@@ -331,61 +331,80 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Manual Entry Form */}
-        {showManualEntry ? (
-          <EntryForm 
-            onEntryCreated={() => setShowManualEntry(false)}
-            onCancel={() => setShowManualEntry(false)}
-          />
-        ) : (
-          <div style={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            marginBottom: '32px'
-          }}>
-            <button
-              onClick={() => setShowManualEntry(true)}
-              style={{
+            {/* Today's Entries Card */}
+            <div style={{
+              backgroundColor: '#1f2937',
+              border: '1px solid #374151',
+              borderRadius: '12px',
+              padding: '0',
+              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+              marginBottom: '32px'
+            }}>
+              {/* Card Header */}
+              <div style={{
                 display: 'flex',
+                justifyContent: 'space-between',
                 alignItems: 'center',
-                gap: '8px',
-                padding: '12px 16px',
-                backgroundColor: '#3b82f6',
-                color: 'white',
-                border: 'none',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontSize: '14px',
-                fontWeight: '500'
-              }}
-            >
-              <Plus size={16} />
-              Add Manual Entry
-            </button>
-          </div>
-        )}
+                padding: '20px 24px',
+                borderBottom: '1px solid #374151'
+              }}>
+                <h2 style={{
+                  fontSize: '18px',
+                  fontWeight: '600',
+                  color: '#f9fafb',
+                  margin: 0
+                }}>
+                  Today's Entries
+                </h2>
+                
+                {/* Add Manual Entry Button */}
+                {!showManualEntry && (
+                  <button
+                    onClick={() => setShowManualEntry(true)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '8px 16px',
+                      backgroundColor: '#3b82f6',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = '#2563eb'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = '#3b82f6'
+                    }}
+                  >
+                    <Plus size={16} />
+                    Add Entry
+                  </button>
+                )}
+              </div>
 
-        {/* Today's Entries */}
-        <div style={{
-          backgroundColor: '#1f2937',
-          border: '1px solid #374151',
-          borderRadius: '8px',
-          padding: '24px'
-        }}>
-          <h2 style={{
-            fontSize: '20px',
-            fontWeight: '600',
-            color: '#f9fafb',
-            margin: '0 0 16px 0'
-          }}>
-            Today's Entries
-          </h2>
-          
-          <EntryList 
-            dateFilter={today}
-            showDateHeaders={false}
-          />
-        </div>
+              {/* Card Content */}
+              <div style={{ padding: '0 24px 24px 24px' }}>
+                {showManualEntry ? (
+                  <div style={{ marginTop: '16px' }}>
+                    <EntryForm 
+                      onEntryCreated={() => setShowManualEntry(false)}
+                      onCancel={() => setShowManualEntry(false)}
+                    />
+                  </div>
+                ) : (
+                  <EntryList 
+                    dateFilter={today}
+                    showDateHeaders={false}
+                  />
+                )}
+              </div>
+            </div>
       </div>
     </div>
   )
