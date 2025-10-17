@@ -32,122 +32,120 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'flex-start',
-          marginBottom: '32px'
-        }}>
-          <div>
-            <h1 style={{
-              fontSize: '32px',
-              fontWeight: 'bold',
-              color: '#f9fafb',
-              margin: '0 0 8px 0'
+            {/* Header */}
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+              marginBottom: '32px'
             }}>
-              TimeTrackr
-            </h1>
-            <p style={{
-              fontSize: '16px',
-              color: '#9ca3af',
-              margin: 0
-            }}>
-              Track your time locally and privately
-            </p>
-          </div>
-          
-          <div style={{
-            display: 'flex',
-            gap: '8px'
-          }}>
-            <a
-              href="/reports"
-              style={{
+              <div>
+                <h1 style={{
+                  fontSize: '32px',
+                  fontWeight: 'bold',
+                  color: '#f9fafb',
+                  margin: '0 0 8px 0'
+                }}>
+                  TimeTrackr
+                </h1>
+                <p style={{
+                  fontSize: '16px',
+                  color: '#9ca3af',
+                  margin: 0
+                }}>
+                  Track your time locally and privately
+                </p>
+              </div>
+              
+              <div style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '8px',
-                padding: '10px 16px',
-                backgroundColor: '#374151',
-                color: '#f9fafb',
-                textDecoration: 'none',
-                borderRadius: '8px',
-                fontSize: '14px',
-                fontWeight: '500',
-                border: '1px solid #4b5563',
-                transition: 'all 0.2s ease'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#4b5563'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = '#374151'
-              }}
-            >
-              <BarChart3 size={16} />
-              Reports
-            </a>
-            <a
-              href="/projects"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '10px 16px',
-                backgroundColor: '#374151',
-                color: '#f9fafb',
-                textDecoration: 'none',
-                borderRadius: '8px',
-                fontSize: '14px',
-                fontWeight: '500',
-                border: '1px solid #4b5563',
-                transition: 'all 0.2s ease'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#4b5563'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = '#374151'
-              }}
-            >
-              <FolderOpen size={16} />
-              Projects
-            </a>
-            <CSVExportButton 
-              variant="all"
-              style={{
-                padding: '10px 16px',
-                fontSize: '14px'
-              }}
-            />
-            <a
-              href="/settings"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '10px 16px',
-                backgroundColor: '#374151',
-                color: '#f9fafb',
-                textDecoration: 'none',
-                borderRadius: '8px',
-                fontSize: '14px',
-                fontWeight: '500',
-                border: '1px solid #4b5563',
-                transition: 'all 0.2s ease'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#4b5563'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = '#374151'
-              }}
-            >
-              <Settings size={16} />
-              Settings
-            </a>
-          </div>
-        </div>
+                gap: '16px'
+              }}>
+                {/* Secondary Navigation - Lightweight */}
+                <div style={{
+                  display: 'flex',
+                  gap: '4px'
+                }}>
+                  <a
+                    href="/reports"
+                    style={{
+                      padding: '6px 12px',
+                      color: '#9ca3af',
+                      textDecoration: 'none',
+                      fontSize: '14px',
+                      fontWeight: '400',
+                      borderRadius: '6px',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.color = '#f9fafb'
+                      e.currentTarget.style.backgroundColor = '#374151'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.color = '#9ca3af'
+                      e.currentTarget.style.backgroundColor = 'transparent'
+                    }}
+                  >
+                    Reports
+                  </a>
+                  <a
+                    href="/projects"
+                    style={{
+                      padding: '6px 12px',
+                      color: '#9ca3af',
+                      textDecoration: 'none',
+                      fontSize: '14px',
+                      fontWeight: '400',
+                      borderRadius: '6px',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.color = '#f9fafb'
+                      e.currentTarget.style.backgroundColor = '#374151'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.color = '#9ca3af'
+                      e.currentTarget.style.backgroundColor = 'transparent'
+                    }}
+                  >
+                    Projects
+                  </a>
+                  <a
+                    href="/settings"
+                    style={{
+                      padding: '6px 12px',
+                      color: '#9ca3af',
+                      textDecoration: 'none',
+                      fontSize: '14px',
+                      fontWeight: '400',
+                      borderRadius: '6px',
+                      transition: 'all 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.color = '#f9fafb'
+                      e.currentTarget.style.backgroundColor = '#374151'
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.color = '#9ca3af'
+                      e.currentTarget.style.backgroundColor = 'transparent'
+                    }}
+                  >
+                    Settings
+                  </a>
+                </div>
+
+                {/* Primary Action - Prominent */}
+                <CSVExportButton 
+                  variant="all"
+                  style={{
+                    padding: '10px 16px',
+                    fontSize: '14px',
+                    fontWeight: '500'
+                  }}
+                />
+              </div>
+            </div>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
