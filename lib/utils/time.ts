@@ -1,3 +1,16 @@
+/**
+ * Time Utilities
+ * 
+ * Helper functions for time formatting and calculations.
+ * Used throughout the app for consistent time display and duration calculations.
+ * 
+ * Features:
+ * - Duration formatting (HH:MM:SS and decimal hours)
+ * - Date/time formatting for display
+ * - Duration calculations with second-level precision
+ * - Integration with date-fns for robust date handling
+ */
+
 import { format, parseISO, differenceInMinutes, differenceInHours, differenceInDays } from 'date-fns'
 
 // Format duration in minutes to HH:MM:SS

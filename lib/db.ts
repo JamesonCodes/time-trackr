@@ -1,3 +1,16 @@
+/**
+ * TimeTrackr Database Layer
+ * 
+ * This file defines the Dexie.js schema and provides React hooks for data access.
+ * All data is stored locally in IndexedDB, ensuring privacy and offline functionality.
+ * 
+ * Key features:
+ * - Projects: Name, color, creation timestamp
+ * - Entries: Start/end times, project association, notes, source (timer/manual)
+ * - React hooks for reactive data updates
+ * - CRUD operations with proper error handling
+ */
+
 import Dexie, { type Table } from 'dexie'
 import { v4 as uuidv4 } from 'uuid'
 

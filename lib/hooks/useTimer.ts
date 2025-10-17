@@ -1,5 +1,19 @@
 'use client'
 
+/**
+ * Timer Hook
+ * 
+ * Custom React hook for managing timer state and persistence.
+ * Handles start/stop/pause/resume functionality with IndexedDB persistence.
+ * 
+ * Features:
+ * - Real-time timer updates with 1-second intervals
+ * - Automatic persistence to IndexedDB
+ * - Resume timer on page reload
+ * - Project and note association
+ * - Duration calculations in both minutes and formatted strings
+ */
+
 import { useState, useEffect, useCallback } from 'react'
 import { entryService, type Entry } from '@/lib/db'
 import { calculateDurationToNow, formatDuration } from '@/lib/utils/time'
