@@ -68,74 +68,26 @@ export default function SettingsPage() {
   }
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      backgroundColor: '#111827',
-      paddingTop: '80px' // Account for timer bar
-    }}>
-      <div style={{
-        maxWidth: '1200px',
-        margin: '0 auto',
-        padding: '32px 16px'
-      }}>
-        <div style={{
-          marginBottom: '32px'
-        }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '16px',
-            marginBottom: '16px'
-          }}>
+    <div className="min-h-screen bg-gray-900 pt-20">
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="mb-8">
+          <div className="flex items-center gap-4 mb-4">
             <Link
               href="/"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '8px 12px',
-                backgroundColor: '#374151',
-                color: '#f9fafb',
-                textDecoration: 'none',
-                borderRadius: '8px',
-                fontSize: '14px',
-                fontWeight: '500',
-                border: '1px solid #4b5563',
-                transition: 'all 0.2s ease'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#4b5563'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = '#374151'
-              }}
+              className="flex items-center gap-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-gray-100 rounded-lg text-sm font-medium border border-gray-600 transition-colors duration-200"
             >
               <ArrowLeft size={16} />
               Back to Dashboard
             </Link>
           </div>
           
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            marginBottom: '8px'
-          }}>
-            <Settings size={32} style={{ color: '#3b82f6' }} />
-            <h1 style={{
-              fontSize: '32px',
-              fontWeight: 'bold',
-              color: '#f9fafb',
-              margin: 0
-            }}>
+          <div className="flex items-center gap-3 mb-2">
+            <Settings size={32} className="text-blue-500" />
+            <h1 className="text-3xl font-bold text-gray-100">
               Settings
             </h1>
           </div>
-          <p style={{
-            fontSize: '16px',
-            color: '#9ca3af',
-            margin: 0
-          }}>
+          <p className="text-gray-400">
             Manage your data and preferences
           </p>
         </div>
