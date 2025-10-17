@@ -124,16 +124,12 @@ export default function EntryList({
 
   if (filteredEntries.length === 0) {
     return (
-      <div style={{
-        textAlign: 'center',
-        padding: '48px 24px',
-        color: '#9ca3af'
-      }}>
-        <Clock size={48} style={{ margin: '0 auto 16px', opacity: 0.5 }} />
-        <p style={{ fontSize: '16px', margin: 0 }}>
+      <div className="text-center py-12 px-6 text-gray-400">
+        <Clock size={48} className="mx-auto mb-4 opacity-50" />
+        <p className="text-base mb-2">
           No entries found
         </p>
-        <p style={{ fontSize: '14px', margin: '8px 0 0 0', opacity: 0.7 }}>
+        <p className="text-sm opacity-70">
           Start a timer or add a manual entry to get started
         </p>
       </div>
@@ -143,71 +139,32 @@ export default function EntryList({
   return (
     <div>
       {sortedDates.map(date => (
-        <div key={date} style={{ marginBottom: '24px' }}>
+        <div key={date} className="mb-6">
           {showDateHeaders && (
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              marginBottom: '12px',
-              padding: '8px 0',
-              borderBottom: '1px solid #374151'
-            }}>
-              <Calendar size={16} style={{ color: '#9ca3af' }} />
-              <h3 style={{
-                fontSize: '16px',
-                fontWeight: '600',
-                color: '#f9fafb',
-                margin: 0
-              }}>
+            <div className="flex items-center gap-2 mb-3 py-2 border-b border-gray-700">
+              <Calendar size={16} className="text-gray-400" />
+              <h3 className="text-base font-semibold text-gray-100">
                 {formatDate(date)}
               </h3>
-              <span style={{
-                fontSize: '14px',
-                color: '#9ca3af',
-                marginLeft: 'auto'
-              }}>
+              <span className="text-sm text-gray-400 ml-auto">
                 {groupedEntries[date].length} entries
               </span>
             </div>
           )}
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div className="flex flex-col gap-3">
                 {groupedEntries[date].map(entry => (
-                  <div key={entry.id} style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    padding: '16px 20px',
-                    backgroundColor: '#374151',
-                    border: '1px solid #4b5563',
-                    borderRadius: '8px',
-                    transition: 'all 0.2s ease',
-                    cursor: 'pointer'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = '#4b5563'
-                    e.currentTarget.style.borderColor = '#6b7280'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = '#374151'
-                    e.currentTarget.style.borderColor = '#4b5563'
-                  }}>
+                  <div 
+                    key={entry.id} 
+                    className="flex items-center justify-between px-5 py-4 bg-gray-700 border border-gray-600 rounded-lg transition-all duration-200 cursor-pointer hover:bg-gray-600 hover:border-gray-500"
+                  >
                 {editingEntry === entry.id ? (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1 }}>
+                  <div className="flex items-center gap-3 flex-1">
                     {/* Project Selector */}
                     <select
                       value={editForm.projectId}
                       onChange={(e) => setEditForm(prev => ({ ...prev, projectId: e.target.value }))}
-                      style={{
-                        padding: '4px 8px',
-                        fontSize: '12px',
-                        border: '1px solid #4b5563',
-                        borderRadius: '4px',
-                        backgroundColor: '#1f2937',
-                        color: '#f9fafb',
-                        minWidth: '120px'
-                      }}
+                      className="px-2 py-1 text-xs border border-gray-600 rounded bg-gray-800 text-gray-100 min-w-[120px]"
                     >
                       <option value="">No Project</option>
                       {projects?.map(project => (
@@ -222,15 +179,7 @@ export default function EntryList({
                       type="time"
                       value={editForm.startTime}
                       onChange={(e) => setEditForm(prev => ({ ...prev, startTime: e.target.value }))}
-                      style={{
-                        padding: '4px 8px',
-                        fontSize: '12px',
-                        border: '1px solid #4b5563',
-                        borderRadius: '4px',
-                        backgroundColor: '#1f2937',
-                        color: '#f9fafb',
-                        width: '100px'
-                      }}
+                      className="px-2 py-1 text-xs border border-gray-600 rounded bg-gray-800 text-gray-100 w-24"
                     />
 
                     {/* End Time */}
@@ -238,15 +187,7 @@ export default function EntryList({
                       type="time"
                       value={editForm.endTime}
                       onChange={(e) => setEditForm(prev => ({ ...prev, endTime: e.target.value }))}
-                      style={{
-                        padding: '4px 8px',
-                        fontSize: '12px',
-                        border: '1px solid #4b5563',
-                        borderRadius: '4px',
-                        backgroundColor: '#1f2937',
-                        color: '#f9fafb',
-                        width: '100px'
-                      }}
+                      className="px-2 py-1 text-xs border border-gray-600 rounded bg-gray-800 text-gray-100 w-24"
                     />
 
                     {/* Note */}
@@ -255,45 +196,20 @@ export default function EntryList({
                       value={editForm.note}
                       onChange={(e) => setEditForm(prev => ({ ...prev, note: e.target.value }))}
                       placeholder="Note..."
-                      style={{
-                        padding: '4px 8px',
-                        fontSize: '12px',
-                        border: '1px solid #4b5563',
-                        borderRadius: '4px',
-                        backgroundColor: '#1f2937',
-                        color: '#f9fafb',
-                        flex: 1,
-                        minWidth: '120px'
-                      }}
+                      className="px-2 py-1 text-xs border border-gray-600 rounded bg-gray-800 text-gray-100 flex-1 min-w-[120px]"
                     />
 
                     {/* Action Buttons */}
-                    <div style={{ display: 'flex', gap: '4px' }}>
+                    <div className="flex gap-1">
                       <button
                         onClick={() => handleSaveEdit(entry.id)}
-                        style={{
-                          padding: '4px 8px',
-                          fontSize: '12px',
-                          backgroundColor: '#10b981',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '4px',
-                          cursor: 'pointer'
-                        }}
+                        className="px-2 py-1 text-xs bg-green-600 hover:bg-green-700 text-white rounded cursor-pointer transition-colors"
                       >
                         Save
                       </button>
                       <button
                         onClick={() => setEditingEntry(null)}
-                        style={{
-                          padding: '4px 8px',
-                          fontSize: '12px',
-                          backgroundColor: '#6b7280',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '4px',
-                          cursor: 'pointer'
-                        }}
+                        className="px-2 py-1 text-xs bg-gray-600 hover:bg-gray-700 text-white rounded cursor-pointer transition-colors"
                       >
                         Cancel
                       </button>
@@ -301,51 +217,29 @@ export default function EntryList({
                   </div>
                 ) : (
                   <>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1 }}>
+                        <div className="flex items-center gap-4 flex-1">
                           {/* Project Badge */}
                           <div
-                            style={{
-                              padding: '6px 12px',
-                              borderRadius: '6px',
-                              fontSize: '12px',
-                              fontWeight: '600',
-                              backgroundColor: getProjectColor(entry.projectId),
-                              color: 'white',
-                              minWidth: '90px',
-                              textAlign: 'center',
-                              textTransform: 'uppercase',
-                              letterSpacing: '0.05em'
-                            }}
+                            className="px-3 py-1.5 rounded text-xs font-semibold text-white min-w-[90px] text-center uppercase tracking-wide"
+                            style={{ backgroundColor: getProjectColor(entry.projectId) }}
                           >
                             {getProjectName(entry.projectId)}
                           </div>
 
                           {/* Time Range */}
-                          <div style={{ minWidth: '180px' }}>
-                            <div style={{ 
-                              fontSize: '14px', 
-                              fontWeight: '500',
-                              color: '#f9fafb',
-                              marginBottom: '2px'
-                            }}>
+                          <div className="min-w-[180px]">
+                            <div className="text-sm font-medium text-gray-100 mb-0.5">
                               {formatTime(entry.startTs)} - {entry.endTs ? formatTime(entry.endTs) : 'Running'}
                             </div>
-                            <div style={{
-                              fontSize: '12px',
-                              color: '#9ca3af'
-                            }}>
+                            <div className="text-xs text-gray-400">
                               {entry.endTs ? formatDuration(calculateDuration(entry.startTs, entry.endTs)) : 'Running...'}
                             </div>
                           </div>
 
                           {/* Note */}
                           {entry.note && (
-                            <div style={{ flex: 1, minWidth: '120px' }}>
-                              <div style={{ 
-                                fontSize: '14px', 
-                                color: '#d1d5db',
-                                fontWeight: '400'
-                              }}>
+                            <div className="flex-1 min-w-[120px]">
+                              <div className="text-sm text-gray-300">
                                 {entry.note}
                               </div>
                             </div>
@@ -353,63 +247,16 @@ export default function EntryList({
                         </div>
 
                         {/* Action Buttons */}
-                        <div style={{ 
-                          display: 'flex', 
-                          gap: '6px',
-                          opacity: '0.6',
-                          transition: 'opacity 0.2s ease'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.opacity = '1'
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.opacity = '0.6'
-                        }}>
+                        <div className="flex gap-1.5 opacity-60 hover:opacity-100 transition-opacity duration-200">
                           <button
                             onClick={() => handleEdit(entry)}
-                            style={{
-                              padding: '8px',
-                              backgroundColor: 'transparent',
-                              border: '1px solid #6b7280',
-                              borderRadius: '6px',
-                              color: '#9ca3af',
-                              cursor: 'pointer',
-                              transition: 'all 0.2s ease'
-                            }}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.backgroundColor = '#4b5563'
-                              e.currentTarget.style.borderColor = '#9ca3af'
-                              e.currentTarget.style.color = '#f9fafb'
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.backgroundColor = 'transparent'
-                              e.currentTarget.style.borderColor = '#6b7280'
-                              e.currentTarget.style.color = '#9ca3af'
-                            }}
+                            className="p-2 bg-transparent border border-gray-500 rounded-md text-gray-400 hover:bg-gray-600 hover:border-gray-400 hover:text-gray-100 transition-all duration-200"
                           >
                             <Edit size={16} />
                           </button>
                           <button
                             onClick={() => handleDelete(entry.id)}
-                            style={{
-                              padding: '8px',
-                              backgroundColor: 'transparent',
-                              border: '1px solid #6b7280',
-                              borderRadius: '6px',
-                              color: '#9ca3af',
-                              cursor: 'pointer',
-                              transition: 'all 0.2s ease'
-                            }}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.backgroundColor = '#dc2626'
-                              e.currentTarget.style.borderColor = '#ef4444'
-                              e.currentTarget.style.color = 'white'
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.backgroundColor = 'transparent'
-                              e.currentTarget.style.borderColor = '#6b7280'
-                              e.currentTarget.style.color = '#9ca3af'
-                            }}
+                            className="p-2 bg-transparent border border-gray-500 rounded-md text-gray-400 hover:bg-red-600 hover:border-red-500 hover:text-white transition-all duration-200"
                           >
                             <Trash2 size={16} />
                           </button>

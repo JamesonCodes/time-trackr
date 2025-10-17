@@ -33,103 +33,34 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto px-4 py-8">
             {/* Header */}
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'flex-start',
-              marginBottom: '32px'
-            }}>
+            <div className="flex justify-between items-start mb-8">
               <div>
-                <h1 style={{
-                  fontSize: '32px',
-                  fontWeight: 'bold',
-                  color: '#f9fafb',
-                  margin: '0 0 8px 0'
-                }}>
+                <h1 className="text-3xl font-bold text-gray-100 mb-2">
                   TimeTrackr
                 </h1>
-                <p style={{
-                  fontSize: '16px',
-                  color: '#9ca3af',
-                  margin: 0
-                }}>
+                <p className="text-gray-400">
                   Track your time locally and privately
                 </p>
               </div>
               
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '16px'
-              }}>
+              <div className="flex items-center gap-4">
                 {/* Secondary Navigation - Lightweight */}
-                <div style={{
-                  display: 'flex',
-                  gap: '4px'
-                }}>
+                <div className="flex gap-1">
                   <a
                     href="/reports"
-                    style={{
-                      padding: '6px 12px',
-                      color: '#9ca3af',
-                      textDecoration: 'none',
-                      fontSize: '14px',
-                      fontWeight: '400',
-                      borderRadius: '6px',
-                      transition: 'all 0.2s ease'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.color = '#f9fafb'
-                      e.currentTarget.style.backgroundColor = '#374151'
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.color = '#9ca3af'
-                      e.currentTarget.style.backgroundColor = 'transparent'
-                    }}
+                    className="px-3 py-1.5 text-gray-400 hover:text-gray-100 hover:bg-gray-700 text-sm font-normal rounded-md transition-all duration-200"
                   >
                     Reports
                   </a>
                   <a
                     href="/projects"
-                    style={{
-                      padding: '6px 12px',
-                      color: '#9ca3af',
-                      textDecoration: 'none',
-                      fontSize: '14px',
-                      fontWeight: '400',
-                      borderRadius: '6px',
-                      transition: 'all 0.2s ease'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.color = '#f9fafb'
-                      e.currentTarget.style.backgroundColor = '#374151'
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.color = '#9ca3af'
-                      e.currentTarget.style.backgroundColor = 'transparent'
-                    }}
+                    className="px-3 py-1.5 text-gray-400 hover:text-gray-100 hover:bg-gray-700 text-sm font-normal rounded-md transition-all duration-200"
                   >
                     Projects
                   </a>
                   <a
                     href="/settings"
-                    style={{
-                      padding: '6px 12px',
-                      color: '#9ca3af',
-                      textDecoration: 'none',
-                      fontSize: '14px',
-                      fontWeight: '400',
-                      borderRadius: '6px',
-                      transition: 'all 0.2s ease'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.color = '#f9fafb'
-                      e.currentTarget.style.backgroundColor = '#374151'
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.color = '#9ca3af'
-                      e.currentTarget.style.backgroundColor = 'transparent'
-                    }}
+                    className="px-3 py-1.5 text-gray-400 hover:text-gray-100 hover:bg-gray-700 text-sm font-normal rounded-md transition-all duration-200"
                   >
                     Settings
                   </a>
@@ -138,71 +69,25 @@ export default function Dashboard() {
                 {/* Primary Action - Prominent */}
                 <CSVExportButton 
                   variant="all"
-                  style={{
-                    padding: '10px 16px',
-                    fontSize: '14px',
-                    fontWeight: '500'
-                  }}
+                  className="px-4 py-2.5 text-sm font-medium"
                 />
               </div>
             </div>
 
         {/* Stats Cards */}
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-          marginBottom: '32px'
-        }}>
-          {/* Desktop: Horizontal layout, Mobile: Vertical stack */}
-          <div style={{
-            display: 'flex',
-            flexDirection: 'row',
-            gap: '16px',
-            flexWrap: 'wrap'
-          }}>
+        <div className="mb-8">
+          <div className="flex flex-col sm:flex-row gap-4">
             {/* Today's Time Card */}
-            <div style={{
-              flex: '1',
-              minWidth: '200px',
-              backgroundColor: '#1f2937',
-              border: '1px solid #374151',
-              borderRadius: '12px',
-              padding: '20px',
-              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
-            }}>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px'
-              }}>
-                <div style={{
-                  padding: '8px',
-                  backgroundColor: '#1e40af',
-                  borderRadius: '8px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}>
-                  <Clock size={20} color="#60a5fa" />
+            <div className="flex-1 min-w-[200px] bg-gray-800 border border-gray-700 rounded-xl p-5 shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-600 rounded-lg flex items-center justify-center">
+                  <Clock size={20} className="text-blue-300" />
                 </div>
                 <div>
-                  <p style={{
-                    fontSize: '12px',
-                    fontWeight: '500',
-                    color: '#9ca3af',
-                    margin: '0 0 4px 0',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em'
-                  }}>
+                  <p className="text-xs font-medium text-gray-400 mb-1 uppercase tracking-wide">
                     Time Today
                   </p>
-                  <p style={{
-                    fontSize: '24px',
-                    fontWeight: 'bold',
-                    color: '#f9fafb',
-                    margin: 0
-                  }}>
+                  <p className="text-2xl font-bold text-gray-100">
                     {formatDuration(todayEntries.reduce((total, entry) => {
                       if (entry.endTs) {
                         return total + calculateDuration(entry.startTs, entry.endTs)
@@ -215,47 +100,16 @@ export default function Dashboard() {
             </div>
 
             {/* Projects Card */}
-            <div style={{
-              flex: '1',
-              minWidth: '200px',
-              backgroundColor: '#1f2937',
-              border: '1px solid #374151',
-              borderRadius: '12px',
-              padding: '20px',
-              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
-            }}>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px'
-              }}>
-                <div style={{
-                  padding: '8px',
-                  backgroundColor: '#059669',
-                  borderRadius: '8px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}>
-                  <FolderOpen size={20} color="#6ee7b7" />
+            <div className="flex-1 min-w-[200px] bg-gray-800 border border-gray-700 rounded-xl p-5 shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-green-600 rounded-lg flex items-center justify-center">
+                  <FolderOpen size={20} className="text-green-300" />
                 </div>
                 <div>
-                  <p style={{
-                    fontSize: '12px',
-                    fontWeight: '500',
-                    color: '#9ca3af',
-                    margin: '0 0 4px 0',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em'
-                  }}>
+                  <p className="text-xs font-medium text-gray-400 mb-1 uppercase tracking-wide">
                     Projects
                   </p>
-                  <p style={{
-                    fontSize: '24px',
-                    fontWeight: 'bold',
-                    color: '#f9fafb',
-                    margin: 0
-                  }}>
+                  <p className="text-2xl font-bold text-gray-100">
                     {projects?.length || 0}
                   </p>
                 </div>
@@ -263,47 +117,16 @@ export default function Dashboard() {
             </div>
 
             {/* Total Entries Card */}
-            <div style={{
-              flex: '1',
-              minWidth: '200px',
-              backgroundColor: '#1f2937',
-              border: '1px solid #374151',
-              borderRadius: '12px',
-              padding: '20px',
-              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
-            }}>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px'
-              }}>
-                <div style={{
-                  padding: '8px',
-                  backgroundColor: '#7c3aed',
-                  borderRadius: '8px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}>
-                  <BarChart3 size={20} color="#c4b5fd" />
+            <div className="flex-1 min-w-[200px] bg-gray-800 border border-gray-700 rounded-xl p-5 shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-purple-600 rounded-lg flex items-center justify-center">
+                  <BarChart3 size={20} className="text-purple-300" />
                 </div>
                 <div>
-                  <p style={{
-                    fontSize: '12px',
-                    fontWeight: '500',
-                    color: '#9ca3af',
-                    margin: '0 0 4px 0',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em'
-                  }}>
+                  <p className="text-xs font-medium text-gray-400 mb-1 uppercase tracking-wide">
                     Entries
                   </p>
-                  <p style={{
-                    fontSize: '24px',
-                    fontWeight: 'bold',
-                    color: '#f9fafb',
-                    margin: 0
-                  }}>
+                  <p className="text-2xl font-bold text-gray-100">
                     {entries?.length || 0}
                   </p>
                 </div>
@@ -332,28 +155,10 @@ export default function Dashboard() {
         )}
 
             {/* Today's Entries Card */}
-            <div style={{
-              backgroundColor: '#1f2937',
-              border: '1px solid #374151',
-              borderRadius: '12px',
-              padding: '0',
-              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
-              marginBottom: '32px'
-            }}>
+            <div className="bg-gray-800 border border-gray-700 rounded-xl shadow-sm mb-8">
               {/* Card Header */}
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                padding: '20px 24px',
-                borderBottom: '1px solid #374151'
-              }}>
-                <h2 style={{
-                  fontSize: '18px',
-                  fontWeight: '600',
-                  color: '#f9fafb',
-                  margin: 0
-                }}>
+              <div className="flex justify-between items-center px-6 py-5 border-b border-gray-700">
+                <h2 className="text-lg font-semibold text-gray-100">
                   Today's Entries
                 </h2>
                 
@@ -361,26 +166,7 @@ export default function Dashboard() {
                 {!showManualEntry && (
                   <button
                     onClick={() => setShowManualEntry(true)}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      padding: '8px 16px',
-                      backgroundColor: '#3b82f6',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '8px',
-                      cursor: 'pointer',
-                      fontSize: '14px',
-                      fontWeight: '500',
-                      transition: 'all 0.2s ease'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = '#2563eb'
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = '#3b82f6'
-                    }}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors duration-200"
                   >
                     <Plus size={16} />
                     Add Entry
@@ -389,9 +175,9 @@ export default function Dashboard() {
               </div>
 
               {/* Card Content */}
-              <div style={{ padding: '0 24px 24px 24px' }}>
+              <div className="px-6 pb-6">
                 {showManualEntry ? (
-                  <div style={{ marginTop: '16px' }}>
+                  <div className="mt-4">
                     <EntryForm 
                       onEntryCreated={() => setShowManualEntry(false)}
                       onCancel={() => setShowManualEntry(false)}

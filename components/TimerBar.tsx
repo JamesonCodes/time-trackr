@@ -39,94 +39,34 @@ export default function TimerBar() {
   return (
     <>
       {/* Floating Timer Bar */}
-      <div style={{
-        position: 'fixed',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        zIndex: 50,
-        backgroundColor: '#374151', // Lighter surface tone than main background
-        borderTop: '1px solid #4b5563',
-        boxShadow: '0 -4px 6px -1px rgba(0, 0, 0, 0.1), 0 -2px 4px -1px rgba(0, 0, 0, 0.06)',
-        backdropFilter: 'blur(8px)'
-      }}>
-        <div style={{
-          maxWidth: '1200px',
-          margin: '0 auto',
-          padding: '16px 24px'
-        }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '16px'
-          }}>
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-gray-700 border-t border-gray-600 shadow-lg backdrop-blur-sm">
+        <div className="max-w-6xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between gap-4">
             {/* Timer Display */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '16px',
-              minWidth: '0',
-              flex: '1'
-            }}>
+            <div className="flex items-center gap-4 min-w-0 flex-1">
               {/* Timer Status with Animation */}
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px'
-              }}>
+              <div className="flex items-center gap-3">
                 {timer.isRunning && (
-                  <div style={{
-                    width: '8px',
-                    height: '8px',
-                    backgroundColor: '#10b981',
-                    borderRadius: '50%',
-                    animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
-                  }} />
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
                 )}
-                <div style={{
-                  fontSize: '28px',
-                  fontFamily: 'monospace',
-                  fontWeight: 'bold',
-                  color: '#f9fafb',
-                  letterSpacing: '0.05em'
-                }}>
+                <div className="text-3xl font-mono font-bold text-white tracking-wider">
                   {timer.isRunning ? timer.getFormattedElapsedTime() : '00:00:00'}
                 </div>
               </div>
               
               {/* Active Timer Info */}
               {timer.isRunning && timer.currentEntry && (
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  minWidth: '0',
-                  flex: '1'
-                }}>
+                <div className="flex items-center gap-3 min-w-0 flex-1">
                   {selectedProject && (
-                    <div style={{
-                      padding: '4px 8px',
-                      borderRadius: '6px',
-                      fontSize: '12px',
-                      fontWeight: '600',
-                      color: 'white',
-                      backgroundColor: selectedProject.color || '#6B7280',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.05em'
-                    }}>
+                    <div 
+                      className="px-2 py-1 rounded text-xs font-semibold text-white uppercase tracking-wide"
+                      style={{ backgroundColor: selectedProject.color || '#6B7280' }}
+                    >
                       {selectedProject.name}
                     </div>
                   )}
                   {timer.currentEntry.note && (
-                    <div style={{
-                      fontSize: '14px',
-                      color: '#d1d5db',
-                      fontStyle: 'italic',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap'
-                    }}>
+                    <div className="text-sm text-gray-300 italic truncate">
                       {timer.currentEntry.note}
                     </div>
                   )}
@@ -135,23 +75,13 @@ export default function TimerBar() {
             </div>
 
             {/* Timer Controls */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              flexShrink: 0
-            }}>
+            <div className="flex items-center gap-3 flex-shrink-0">
               {!timer.isRunning ? (
                 <>
                   {/* Secondary Controls */}
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    opacity: '0.8'
-                  }}>
+                  <div className="flex items-center gap-2 opacity-80">
                     {/* Project Selector */}
-                    <div style={{ minWidth: '180px' }}>
+                    <div className="min-w-[180px]">
                       <ProjectSelector
                         selectedProjectId={selectedProjectId}
                         onProjectSelect={setSelectedProjectId}
@@ -165,58 +95,14 @@ export default function TimerBar() {
                       value={note}
                       onChange={(e) => setNote(e.target.value)}
                       placeholder="Note..."
-                      style={{
-                        padding: '8px 12px',
-                        fontSize: '14px',
-                        border: '1px solid #6b7280',
-                        borderRadius: '6px',
-                        backgroundColor: '#4b5563',
-                        color: '#f9fafb',
-                        width: '160px',
-                        outline: 'none',
-                        transition: 'all 0.2s ease'
-                      }}
-                      onFocus={(e) => {
-                        e.target.style.borderColor = '#9ca3af'
-                        e.target.style.backgroundColor = '#6b7280'
-                      }}
-                      onBlur={(e) => {
-                        e.target.style.borderColor = '#6b7280'
-                        e.target.style.backgroundColor = '#4b5563'
-                      }}
+                      className="px-3 py-2 text-sm border border-gray-500 rounded-md bg-gray-600 text-white placeholder-gray-400 w-40 focus:border-gray-400 focus:bg-gray-500 focus:outline-none transition-all duration-200"
                     />
                   </div>
 
                   {/* Primary Start Button */}
                   <button
                     onClick={handleStartTimer}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      padding: '12px 20px',
-                      backgroundColor: '#10b981',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '8px',
-                      cursor: 'pointer',
-                      fontSize: '16px',
-                      fontWeight: '600',
-                      boxShadow: '0 2px 4px rgba(16, 185, 129, 0.3)',
-                      transition: 'all 0.2s ease',
-                      minWidth: '100px',
-                      justifyContent: 'center'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = '#059669'
-                      e.currentTarget.style.transform = 'translateY(-1px)'
-                      e.currentTarget.style.boxShadow = '0 4px 8px rgba(16, 185, 129, 0.4)'
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = '#10b981'
-                      e.currentTarget.style.transform = 'translateY(0)'
-                      e.currentTarget.style.boxShadow = '0 2px 4px rgba(16, 185, 129, 0.3)'
-                    }}
+                    className="flex items-center gap-2 px-5 py-3 bg-green-600 hover:bg-green-700 text-white border-none rounded-lg cursor-pointer text-base font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 min-w-[100px] justify-center"
                   >
                     <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M8 5v14l11-7z"/>
@@ -229,33 +115,7 @@ export default function TimerBar() {
                   {/* Primary Stop Button */}
                   <button
                     onClick={handleStopTimer}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      padding: '12px 20px',
-                      backgroundColor: '#ef4444',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '8px',
-                      cursor: 'pointer',
-                      fontSize: '16px',
-                      fontWeight: '600',
-                      boxShadow: '0 2px 4px rgba(239, 68, 68, 0.3)',
-                      transition: 'all 0.2s ease',
-                      minWidth: '100px',
-                      justifyContent: 'center'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = '#dc2626'
-                      e.currentTarget.style.transform = 'translateY(-1px)'
-                      e.currentTarget.style.boxShadow = '0 4px 8px rgba(239, 68, 68, 0.4)'
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = '#ef4444'
-                      e.currentTarget.style.transform = 'translateY(0)'
-                      e.currentTarget.style.boxShadow = '0 2px 4px rgba(239, 68, 68, 0.3)'
-                    }}
+                    className="flex items-center gap-2 px-5 py-3 bg-red-600 hover:bg-red-700 text-white border-none rounded-lg cursor-pointer text-base font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 min-w-[100px] justify-center"
                   >
                     <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M6 6h12v12H6z"/>
@@ -270,19 +130,7 @@ export default function TimerBar() {
       </div>
 
       {/* Add bottom padding to prevent content from being hidden behind the timer bar */}
-      <div style={{ height: '80px' }} />
-
-      {/* CSS Animation for Pulse Effect */}
-      <style jsx>{`
-        @keyframes pulse {
-          0%, 100% {
-            opacity: 1;
-          }
-          50% {
-            opacity: 0.5;
-          }
-        }
-      `}</style>
+      <div className="h-20" />
     </>
   )
 }
