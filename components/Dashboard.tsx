@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useEntries, useProjects, useRunningEntry, entryService } from '@/lib/db'
 import { useTimer } from '@/lib/hooks/useTimer'
 import { formatDate, formatTime, formatDuration, calculateDuration } from '@/lib/utils/time'
-import { Plus, Clock, FolderOpen, BarChart3 } from 'lucide-react'
+import { Plus, Clock, FolderOpen, BarChart3, Settings } from 'lucide-react'
 import EntryForm from './EntryForm'
 import EntryList from './EntryList'
 import CSVExportButton from './CSVExportButton'
@@ -120,6 +120,32 @@ export default function Dashboard() {
                 fontSize: '14px'
               }}
             />
+            <a
+              href="/settings"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '10px 16px',
+                backgroundColor: '#374151',
+                color: '#f9fafb',
+                textDecoration: 'none',
+                borderRadius: '8px',
+                fontSize: '14px',
+                fontWeight: '500',
+                border: '1px solid #4b5563',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#4b5563'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = '#374151'
+              }}
+            >
+              <Settings size={16} />
+              Settings
+            </a>
           </div>
         </div>
 
