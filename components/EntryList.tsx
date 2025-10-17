@@ -152,7 +152,7 @@ export default function EntryList({
             </div>
           )}
 
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-3 mt-4">
                 {groupedEntries[date].map(entry => (
                   <div 
                     key={entry.id} 
