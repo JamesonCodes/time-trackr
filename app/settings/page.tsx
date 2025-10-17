@@ -2,12 +2,12 @@
 
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Settings, Trash2, Database, Download } from 'lucide-react'
+import { ArrowLeft, Settings, Trash2, Database, Download, HardDrive } from 'lucide-react'
 import { useEntries, useProjects, db } from '@/lib/db'
 import CSVExportButton from '@/components/CSVExportButton'
 
 export default function SettingsPage() {
-  const [showClearModal, setShowClearModal] = useState(false)
+  const [showConfirmation, setShowConfirmation] = useState(false)
   const [isClearing, setIsClearing] = useState(false)
   const [storageStats, setStorageStats] = useState({
     entries: 0,
@@ -47,7 +47,7 @@ export default function SettingsPage() {
     try {
       await db.entries.clear()
       await db.projects.clear()
-      setShowClearModal(false)
+      setShowConfirmation(false)
       
       // Show success message
       alert('All data has been cleared successfully.')
@@ -94,7 +94,7 @@ export default function SettingsPage() {
 
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
           gap: '24px'
         }}>
           {/* Data Management */}
@@ -127,44 +127,122 @@ export default function SettingsPage() {
             <div style={{
               display: 'flex',
               flexDirection: 'column',
-              gap: '12px'
+              gap: '16px'
             }}>
               <CSVExportButton 
                 variant="all"
                 style={{
                   width: '100%',
-                  justifyContent: 'center'
+                  justifyContent: 'center',
+                  padding: '10px 14px'
                 }}
               />
               
-              <button
-                onClick={() => setShowClearModal(true)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  padding: '12px 16px',
-                  backgroundColor: '#ef4444',
-                  color: 'white',
-                  border: 'none',
+              {!showConfirmation ? (
+                <button
+                  onClick={() => setShowConfirmation(true)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '10px 14px',
+                    backgroundColor: '#ef4444',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    transition: 'all 0.2s ease',
+                    width: '100%',
+                    justifyContent: 'center'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#dc2626'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = '#ef4444'
+                  }}
+                >
+                  <Trash2 size={16} />
+                  Clear All Data
+                </button>
+              ) : (
+                <div style={{
+                  backgroundColor: '#374151',
+                  border: '1px solid #4b5563',
                   borderRadius: '8px',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  transition: 'all 0.2s ease',
-                  width: '100%',
-                  justifyContent: 'center'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#dc2626'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = '#ef4444'
-                }}
-              >
-                <Trash2 size={16} />
-                Clear All Data
-              </button>
+                  padding: '16px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px'
+                }}>
+                  <p style={{
+                    fontSize: '14px',
+                    color: '#f9fafb',
+                    margin: '0',
+                    lineHeight: '1.4'
+                  }}>
+                    Are you sure? This will permanently delete all entries.
+                  </p>
+                  <div style={{
+                    display: 'flex',
+                    gap: '8px'
+                  }}>
+                    <button
+                      onClick={() => setShowConfirmation(false)}
+                      style={{
+                        flex: 1,
+                        padding: '8px 12px',
+                        backgroundColor: '#6b7280',
+                        color: '#f9fafb',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        fontWeight: '500',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = '#4b5563'
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = '#6b7280'
+                      }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleClearAllData}
+                      disabled={isClearing}
+                      style={{
+                        flex: 1,
+                        padding: '8px 12px',
+                        backgroundColor: isClearing ? '#6b7280' : '#ef4444',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: isClearing ? 'not-allowed' : 'pointer',
+                        fontSize: '14px',
+                        fontWeight: '500',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!isClearing) {
+                          e.currentTarget.style.backgroundColor = '#dc2626'
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!isClearing) {
+                          e.currentTarget.style.backgroundColor = '#ef4444'
+                        }
+                      }}
+                    >
+                      {isClearing ? 'Clearing...' : 'Confirm'}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -184,7 +262,7 @@ export default function SettingsPage() {
               alignItems: 'center',
               gap: '8px'
             }}>
-              <Database size={20} />
+              <HardDrive size={20} />
               Storage Statistics
             </h2>
             <p style={{
@@ -208,7 +286,12 @@ export default function SettingsPage() {
                 backgroundColor: '#374151',
                 borderRadius: '6px'
               }}>
-                <span style={{ color: '#d1d5db', fontSize: '14px' }}>Time Entries</span>
+                <div>
+                  <span style={{ color: '#d1d5db', fontSize: '14px' }}>Time Entries</span>
+                  <div style={{ color: '#6b7280', fontSize: '11px', marginTop: '4px' }}>
+                    Total entries stored locally
+                  </div>
+                </div>
                 <span style={{ color: '#f9fafb', fontSize: '16px', fontWeight: '600' }}>
                   {storageStats.entries}
                 </span>
@@ -222,7 +305,12 @@ export default function SettingsPage() {
                 backgroundColor: '#374151',
                 borderRadius: '6px'
               }}>
-                <span style={{ color: '#d1d5db', fontSize: '14px' }}>Projects</span>
+                <div>
+                  <span style={{ color: '#d1d5db', fontSize: '14px' }}>Projects</span>
+                  <div style={{ color: '#6b7280', fontSize: '11px', marginTop: '4px' }}>
+                    Active projects in your workspace
+                  </div>
+                </div>
                 <span style={{ color: '#f9fafb', fontSize: '16px', fontWeight: '600' }}>
                   {storageStats.projects}
                 </span>
@@ -236,7 +324,12 @@ export default function SettingsPage() {
                 backgroundColor: '#374151',
                 borderRadius: '6px'
               }}>
-                <span style={{ color: '#d1d5db', fontSize: '14px' }}>Estimated Size</span>
+                <div>
+                  <span style={{ color: '#d1d5db', fontSize: '14px' }}>Estimated Size</span>
+                  <div style={{ color: '#6b7280', fontSize: '11px', marginTop: '4px' }}>
+                    Current storage footprint
+                  </div>
+                </div>
                 <span style={{ color: '#f9fafb', fontSize: '16px', fontWeight: '600' }}>
                   {formatFileSize(storageStats.totalSize)}
                 </span>
@@ -245,101 +338,30 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        {/* Clear Data Confirmation Modal */}
-        {showClearModal && (
+        {/* App Info Footer */}
+        <div style={{
+          marginTop: '32px',
+          textAlign: 'left'
+        }}>
           <div style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1000
+            fontSize: '11px',
+            fontWeight: '500',
+            color: '#6b7280',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+            marginBottom: '8px'
           }}>
-            <div style={{
-              backgroundColor: '#1f2937',
-              border: '1px solid #374151',
-              borderRadius: '12px',
-              padding: '32px',
-              maxWidth: '400px',
-              width: '90%',
-              textAlign: 'center'
-            }}>
-              <div style={{
-                width: '64px',
-                height: '64px',
-                backgroundColor: '#ef4444',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                margin: '0 auto 16px'
-              }}>
-                <Trash2 size={32} style={{ color: 'white' }} />
-              </div>
-              
-              <h3 style={{
-                fontSize: '20px',
-                fontWeight: '600',
-                color: '#f9fafb',
-                margin: '0 0 8px 0'
-              }}>
-                Clear All Data
-              </h3>
-              
-              <p style={{
-                fontSize: '14px',
-                color: '#9ca3af',
-                margin: '0 0 24px 0',
-                lineHeight: '1.5'
-              }}>
-                This will permanently delete all your time entries and projects. 
-                This action cannot be undone.
-              </p>
-              
-              <div style={{
-                display: 'flex',
-                gap: '12px',
-                justifyContent: 'center'
-              }}>
-                <button
-                  onClick={() => setShowClearModal(false)}
-                  style={{
-                    padding: '10px 20px',
-                    backgroundColor: '#374151',
-                    color: '#f9fafb',
-                    border: '1px solid #4b5563',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontSize: '14px',
-                    fontWeight: '500'
-                  }}
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleClearAllData}
-                  disabled={isClearing}
-                  style={{
-                    padding: '10px 20px',
-                    backgroundColor: isClearing ? '#6b7280' : '#ef4444',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '6px',
-                    cursor: isClearing ? 'not-allowed' : 'pointer',
-                    fontSize: '14px',
-                    fontWeight: '500'
-                  }}
-                >
-                  {isClearing ? 'Clearing...' : 'Clear All Data'}
-                </button>
-              </div>
-            </div>
+            App Info
           </div>
-        )}
+          <div style={{
+            fontSize: '13px',
+            color: '#9ca3af',
+            lineHeight: '1.4'
+          }}>
+            Version 1.0.0 • Local-first build • Last updated Oct 2025
+          </div>
+        </div>
+
       </div>
     </div>
   )
