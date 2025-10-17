@@ -39,7 +39,11 @@ export default function TimerBar() {
   return (
     <>
       {/* Floating Timer Bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-gray-700 border-t border-gray-600 shadow-lg backdrop-blur-sm">
+      <div className={`fixed bottom-0 left-0 right-0 z-50 border-t shadow-lg backdrop-blur-sm transition-all duration-500 ${
+        timer.isRunning 
+          ? 'bg-green-800/90 border-green-600 shadow-green-500/20' 
+          : 'bg-gray-700/80 border-gray-600 shadow-gray-500/10'
+      }`}>
         <div className="max-w-6xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between gap-4">
             {/* Timer Display */}
@@ -47,11 +51,20 @@ export default function TimerBar() {
               {/* Timer Status with Animation */}
               <div className="flex items-center gap-3">
                 {timer.isRunning && (
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                  <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/50" />
                 )}
-                <div className="text-3xl font-mono font-bold text-white tracking-wider">
+                <div className={`text-3xl font-mono font-bold tracking-wider transition-all duration-300 ${
+                  timer.isRunning 
+                    ? 'text-green-100 drop-shadow-lg' 
+                    : 'text-gray-300'
+                }`}>
                   {timer.isRunning ? timer.getFormattedElapsedTime() : '00:00:00'}
                 </div>
+                {timer.isRunning && (
+                  <div className="text-xs text-green-300 font-medium animate-pulse">
+                    REC
+                  </div>
+                )}
               </div>
               
               {/* Active Timer Info */}
@@ -79,7 +92,7 @@ export default function TimerBar() {
               {!timer.isRunning ? (
                 <>
                   {/* Secondary Controls */}
-                  <div className="flex items-center gap-2 opacity-80">
+                  <div className="flex items-center gap-2 opacity-60 hover:opacity-80 transition-opacity duration-300">
                     {/* Project Selector */}
                     <div className="min-w-[180px]">
                       <ProjectSelector
@@ -102,7 +115,7 @@ export default function TimerBar() {
                   {/* Primary Start Button */}
                   <button
                     onClick={handleStartTimer}
-                    className="flex items-center gap-2 px-5 py-3 bg-green-600 hover:bg-green-700 text-white border-none rounded-lg cursor-pointer text-base font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 min-w-[100px] justify-center"
+                    className="flex items-center gap-2 px-5 py-3 bg-green-600 hover:bg-green-700 text-white border-none rounded-lg cursor-pointer text-base font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 min-w-[100px] justify-center hover:shadow-green-500/25"
                   >
                     <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M8 5v14l11-7z"/>
@@ -115,7 +128,7 @@ export default function TimerBar() {
                   {/* Primary Stop Button */}
                   <button
                     onClick={handleStopTimer}
-                    className="flex items-center gap-2 px-5 py-3 bg-red-600 hover:bg-red-700 text-white border-none rounded-lg cursor-pointer text-base font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 min-w-[100px] justify-center"
+                    className="flex items-center gap-2 px-5 py-3 bg-red-600 hover:bg-red-700 text-white border-none rounded-lg cursor-pointer text-base font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 min-w-[100px] justify-center hover:shadow-red-500/25"
                   >
                     <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M6 6h12v12H6z"/>
