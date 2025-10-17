@@ -1,12 +1,15 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, BarChart3 } from 'lucide-react'
 import ReportTable from '@/components/ReportTable'
 import WeekSelector from '@/components/WeekSelector'
+import CSVExportButton from '@/components/CSVExportButton'
 
 export default function ReportsPage() {
+  const [selectedWeek, setSelectedWeek] = useState(new Date())
+
   return (
     <div style={{
       minHeight: '100vh',
@@ -88,14 +91,33 @@ export default function ReportsPage() {
           padding: '24px',
           marginBottom: '24px'
         }}>
-          <h2 style={{
-            fontSize: '18px',
-            fontWeight: '600',
-            color: '#f9fafb',
-            margin: '0 0 16px 0'
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '16px'
           }}>
-            Select Week
-          </h2>
+            <h2 style={{
+              fontSize: '18px',
+              fontWeight: '600',
+              color: '#f9fafb',
+              margin: 0
+            }}>
+              Select Week
+            </h2>
+            <div style={{
+              display: 'flex',
+              gap: '8px'
+            }}>
+              <CSVExportButton 
+                variant="week" 
+                weekStart={selectedWeek}
+              />
+              <CSVExportButton 
+                variant="all"
+              />
+            </div>
+          </div>
           <WeekSelector />
         </div>
 

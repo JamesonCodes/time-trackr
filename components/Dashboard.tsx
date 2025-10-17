@@ -7,6 +7,7 @@ import { formatDate, formatTime, formatDuration, calculateDuration } from '@/lib
 import { Plus, Clock, FolderOpen, BarChart3 } from 'lucide-react'
 import EntryForm from './EntryForm'
 import EntryList from './EntryList'
+import CSVExportButton from './CSVExportButton'
 
 export default function Dashboard() {
   const [showManualEntry, setShowManualEntry] = useState(false)
@@ -112,6 +113,13 @@ export default function Dashboard() {
               <FolderOpen size={16} />
               Projects
             </a>
+            <CSVExportButton 
+              variant="all"
+              style={{
+                padding: '10px 16px',
+                fontSize: '14px'
+              }}
+            />
           </div>
         </div>
 
