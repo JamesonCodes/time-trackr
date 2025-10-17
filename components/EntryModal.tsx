@@ -4,6 +4,8 @@ import React, { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
 import EntryForm from './EntryForm'
+import Toast from './Toast'
+import { useToast } from '@/lib/hooks/useToast'
 
 interface EntryModalProps {
   isOpen: boolean
@@ -14,6 +16,7 @@ interface EntryModalProps {
 export default function EntryModal({ isOpen, onClose, onEntryCreated }: EntryModalProps) {
   const modalRef = useRef<HTMLDivElement>(null)
   const previousActiveElement = useRef<HTMLElement | null>(null)
+  const { toasts, showToast, dismissToast } = useToast()
 
   // Focus trap and ESC key handling
   useEffect(() => {
@@ -67,6 +70,7 @@ export default function EntryModal({ isOpen, onClose, onEntryCreated }: EntryMod
   if (!isOpen) return null
 
   const handleEntryCreated = () => {
+    showToast('✅ Entry added successfully', 'success')
     onEntryCreated?.()
     onClose()
   }
@@ -87,9 +91,14 @@ export default function EntryModal({ isOpen, onClose, onEntryCreated }: EntryMod
       >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-700">
-          <h2 id="modal-title" className="text-xl font-semibold text-gray-100">
-            Add Entry
-          </h2>
+          <div>
+            <h2 id="modal-title" className="text-xl font-semibold text-gray-100">
+              New Time Entry
+            </h2>
+            <p className="text-sm text-gray-400 mt-1">
+              Manual Entry
+            </p>
+          </div>
           <button
             onClick={onClose}
             className="p-2 text-gray-400 hover:text-gray-100 hover:bg-gray-700 rounded-lg transition-colors duration-200"
@@ -107,6 +116,15 @@ export default function EntryModal({ isOpen, onClose, onEntryCreated }: EntryMod
           />
         </div>
       </div>
+
+      {/* Toast Notifications */}
+      {toasts.map((toast) => (
+        <Toast
+          key={toast.id}
+          toast={toast}
+          onDismiss={dismissToast}
+        />
+      ))}
     </div>,
     document.body
   )

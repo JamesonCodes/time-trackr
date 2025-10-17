@@ -1,10 +1,12 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useProjects, entryService } from '@/lib/db'
-import { formatDate, formatTime } from '@/lib/utils/time'
+import { formatDate, formatTime, calculateDurationBetweenTimes, formatDurationShort } from '@/lib/utils/time'
+import { getLastProject, setLastProject } from '@/lib/utils/storage'
 import { Plus, X } from 'lucide-react'
 import ProjectSelector from './ProjectSelector'
+import TimePicker from './TimePicker'
 
 interface EntryFormProps {
   onEntryCreated?: () => void
@@ -21,22 +23,71 @@ export default function EntryForm({ onEntryCreated, onCancel, initialDate }: Ent
     note: ''
   })
 
-  // Set default times when component mounts
-  React.useEffect(() => {
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [errors, setErrors] = useState<Record<string, string>>({})
+  const projectRef = useRef<HTMLDivElement>(null)
+  const noteRef = useRef<HTMLInputElement>(null)
+  const dateRef = useRef<HTMLInputElement>(null)
+
+  const projects = useProjects()
+
+  // Set default times and load last project when component mounts
+  useEffect(() => {
     const now = new Date()
-    const currentTime = now.toTimeString().slice(0, 5) // HH:MM format
-    const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000).toTimeString().slice(0, 5)
+    const hour = now.getHours()
+    const minute = now.getMinutes()
+    const period = hour >= 12 ? 'PM' : 'AM'
+    const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour
+    const currentTime = `${displayHour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')} ${period}`
+    
+    const oneHourLater = new Date(now.getTime() + 60 * 60 * 1000)
+    const laterHour = oneHourLater.getHours()
+    const laterMinute = oneHourLater.getMinutes()
+    const laterPeriod = laterHour >= 12 ? 'PM' : 'AM'
+    const laterDisplayHour = laterHour === 0 ? 12 : laterHour > 12 ? laterHour - 12 : laterHour
+    const oneHourLaterTime = `${laterDisplayHour.toString().padStart(2, '0')}:${laterMinute.toString().padStart(2, '0')} ${laterPeriod}`
+    
+    // Load last used project
+    const lastProject = getLastProject()
     
     setFormData(prev => ({
       ...prev,
       startTime: prev.startTime || currentTime,
-      endTime: prev.endTime || oneHourLater
+      endTime: prev.endTime || oneHourLaterTime,
+      projectId: lastProject || prev.projectId
     }))
   }, [])
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [errors, setErrors] = useState<Record<string, string>>({})
 
-  const projects = useProjects()
+  // Calculate duration for preview
+  const calculatedDuration = React.useMemo(() => {
+    if (!formData.startTime || !formData.endTime) return null
+    
+    try {
+      // Convert 12-hour format to 24-hour format for calculation
+      const parseTimeString = (timeStr: string) => {
+        const [time, period] = timeStr.split(' ')
+        const [hour, minute] = time.split(':').map(Number)
+        let hour24 = hour
+        if (period === 'PM' && hour !== 12) hour24 = hour + 12
+        if (period === 'AM' && hour === 12) hour24 = 0
+        return `${hour24.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
+      }
+      
+      const startTime24 = parseTimeString(formData.startTime)
+      const endTime24 = parseTimeString(formData.endTime)
+      
+      const duration = calculateDurationBetweenTimes(
+        startTime24,
+        endTime24,
+        formData.startDate
+      )
+      
+      return duration > 0 ? formatDurationShort(duration) : null
+    } catch (error) {
+      console.error('Error calculating duration:', error)
+      return null
+    }
+  }, [formData.startTime, formData.endTime, formData.startDate])
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
@@ -63,8 +114,6 @@ export default function EntryForm({ onEntryCreated, onCancel, initialDate }: Ent
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    console.log('Form data:', formData)
-    
     if (!validateForm()) {
       return
     }
@@ -72,10 +121,21 @@ export default function EntryForm({ onEntryCreated, onCancel, initialDate }: Ent
     setIsSubmitting(true)
     
     try {
-      const startTs = new Date(`${formData.startDate}T${formData.startTime}`).toISOString()
-      const endTs = new Date(`${formData.startDate}T${formData.endTime}`).toISOString()
-
-      console.log('Creating entry with:', { startTs, endTs })
+      // Convert 12-hour format to 24-hour format for database storage
+      const parseTimeString = (timeStr: string) => {
+        const [time, period] = timeStr.split(' ')
+        const [hour, minute] = time.split(':').map(Number)
+        let hour24 = hour
+        if (period === 'PM' && hour !== 12) hour24 = hour + 12
+        if (period === 'AM' && hour === 12) hour24 = 0
+        return `${hour24.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`
+      }
+      
+      const startTime24 = parseTimeString(formData.startTime)
+      const endTime24 = parseTimeString(formData.endTime)
+      
+      const startTs = new Date(`${formData.startDate}T${startTime24}`).toISOString()
+      const endTs = new Date(`${formData.startDate}T${endTime24}`).toISOString()
 
       await entryService.create({
         projectId: formData.projectId || undefined,
@@ -84,6 +144,11 @@ export default function EntryForm({ onEntryCreated, onCancel, initialDate }: Ent
         note: formData.note || undefined,
         source: 'manual'
       })
+
+      // Save last used project
+      if (formData.projectId) {
+        setLastProject(formData.projectId)
+      }
 
       // Reset form
       setFormData({
@@ -104,6 +169,14 @@ export default function EntryForm({ onEntryCreated, onCancel, initialDate }: Ent
     }
   }
 
+  // Handle keyboard shortcuts
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      handleSubmit(e as any)
+    }
+  }
+
   const getProjectName = (projectId?: string) => {
     if (!projectId) return 'No Project'
     const project = projects?.find(p => p.id === projectId)
@@ -117,289 +190,133 @@ export default function EntryForm({ onEntryCreated, onCancel, initialDate }: Ent
   }
 
   return (
-    <div style={{
-      backgroundColor: '#1f2937',
-      border: '1px solid #374151',
-      borderRadius: '8px',
-      padding: '24px',
-      marginBottom: '32px'
-    }}>
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        marginBottom: '16px'
-      }}>
-        <h2 style={{
-          fontSize: '20px',
-          fontWeight: '600',
-          color: '#f9fafb',
-          margin: 0
-        }}>
-          Manual Entry
-        </h2>
-        {onCancel && (
-          <button
-            onClick={onCancel}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              padding: '8px',
-              backgroundColor: 'transparent',
-              border: 'none',
-              color: '#9ca3af',
-              cursor: 'pointer',
-              borderRadius: '4px'
-            }}
-          >
-            <X size={20} />
-          </button>
-        )}
+    <form onSubmit={handleSubmit} onKeyDown={handleKeyDown} className="space-y-6">
+      {/* Project and Note Row */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Project Selector */}
+        <div ref={projectRef}>
+          <label className="block text-sm font-medium text-gray-300 mb-2">
+            Project
+          </label>
+          <ProjectSelector
+            selectedProjectId={formData.projectId || undefined}
+            onProjectSelect={(projectId) => setFormData(prev => ({ ...prev, projectId: projectId || '' }))}
+            placeholder="No Project"
+          />
+        </div>
+
+        {/* Note */}
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-2">
+            Note
+          </label>
+          <input
+            ref={noteRef}
+            type="text"
+            value={formData.note}
+            onChange={(e) => setFormData(prev => ({ ...prev, note: e.target.value }))}
+            placeholder="Optional note..."
+            className="w-full px-3 py-2 text-sm border border-gray-600 rounded-lg bg-gray-700 text-gray-100 placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition-colors"
+            tabIndex={2}
+          />
+        </div>
       </div>
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-          {/* Project Selector */}
-          <div>
-            <label style={{
-              display: 'block',
-              fontSize: '14px',
-              fontWeight: '500',
-              color: '#d1d5db',
-              marginBottom: '4px'
-            }}>
-              Project
-            </label>
-            <ProjectSelector
-              selectedProjectId={formData.projectId || undefined}
-              onProjectSelect={(projectId) => setFormData(prev => ({ ...prev, projectId: projectId || '' }))}
-              placeholder="No Project"
-            />
-          </div>
+      {/* Subtle divider with label */}
+      <div className="flex items-center gap-3">
+        <div className="flex-1 border-t border-gray-700"></div>
+        <span className="text-sm text-gray-500 px-2">Time Details</span>
+        <div className="flex-1 border-t border-gray-700"></div>
+      </div>
 
-          {/* Note */}
-          <div>
-            <label style={{
-              display: 'block',
-              fontSize: '14px',
-              fontWeight: '500',
-              color: '#d1d5db',
-              marginBottom: '4px'
-            }}>
-              Note
-            </label>
+      {/* Date and Time Group */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Date */}
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-2">
+            Date
+          </label>
+          <div
+            className="relative cursor-pointer"
+            onClick={() => {
+              const input = document.getElementById('startDate') as HTMLInputElement
+              input?.showPicker?.() || input?.focus()
+            }}
+          >
             <input
-              type="text"
-              value={formData.note}
-              onChange={(e) => setFormData(prev => ({ ...prev, note: e.target.value }))}
-              placeholder="Optional note..."
-              style={{
-                width: '100%',
-                padding: '8px 12px',
-                fontSize: '14px',
-                border: '1px solid #4b5563',
-                borderRadius: '6px',
-                backgroundColor: '#374151',
-                color: '#f9fafb'
-              }}
+              ref={dateRef}
+              id="startDate"
+              type="date"
+              value={formData.startDate}
+              onChange={(e) => setFormData(prev => ({ ...prev, startDate: e.target.value }))}
+              required
+              className="w-full px-3 py-2 text-sm border border-gray-600 rounded-lg bg-gray-800 text-gray-100 cursor-pointer focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition-colors pointer-events-none"
+              tabIndex={3}
             />
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
-          {/* Date */}
-          <div>
-            <label style={{
-              display: 'block',
-              fontSize: '14px',
-              fontWeight: '500',
-              color: '#d1d5db',
-              marginBottom: '4px'
-            }}>
-              Date
-            </label>
-            <div
-              style={{
-                position: 'relative',
-                width: '100%',
-                cursor: 'pointer'
-              }}
-              onClick={() => {
-                const input = document.getElementById('startDate') as HTMLInputElement
-                input?.showPicker?.() || input?.focus()
-              }}
-            >
-              <input
-                id="startDate"
-                type="date"
-                value={formData.startDate}
-                onChange={(e) => setFormData(prev => ({ ...prev, startDate: e.target.value }))}
-                required
-                style={{
-                  width: '100%',
-                  padding: '12px 16px',
-                  fontSize: '16px',
-                  border: '2px solid #4b5563',
-                  borderRadius: '8px',
-                  backgroundColor: '#1f2937',
-                  color: '#f9fafb',
-                  minHeight: '48px',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                  boxSizing: 'border-box',
-                  pointerEvents: 'none' // Prevent direct interaction, use wrapper click
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = '#3b82f6'
-                  e.target.style.backgroundColor = '#111827'
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = '#4b5563'
-                  e.target.style.backgroundColor = '#1f2937'
-                }}
-              />
-            </div>
-          </div>
-
-          {/* Start Time */}
-          <div>
-            <label style={{
-              display: 'block',
-              fontSize: '14px',
-              fontWeight: '500',
-              color: '#d1d5db',
-              marginBottom: '4px'
-            }}>
-              Start Time
-            </label>
-                    <div
-                      style={{
-                        position: 'relative',
-                        width: '100%',
-                        cursor: 'pointer'
-                      }}
-                      onClick={() => {
-                        const input = document.getElementById('startTime') as HTMLInputElement
-                        input?.showPicker?.() || input?.focus()
-                      }}
-                    >
-                      <input
-                        id="startTime"
-                        type="time"
-                        value={formData.startTime}
-                        onChange={(e) => setFormData(prev => ({ ...prev, startTime: e.target.value }))}
-                        required
-                        style={{
-                          width: '100%',
-                          padding: '12px 16px',
-                          fontSize: '16px',
-                          border: errors.startTime ? '2px solid #ef4444' : '2px solid #4b5563',
-                          borderRadius: '8px',
-                          backgroundColor: '#1f2937',
-                          color: '#f9fafb',
-                          minHeight: '48px',
-                          cursor: 'pointer',
-                          transition: 'all 0.2s ease',
-                          boxSizing: 'border-box',
-                          pointerEvents: 'none' // Prevent direct interaction, use wrapper click
-                        }}
-                        onFocus={(e) => {
-                          e.target.style.borderColor = '#3b82f6'
-                          e.target.style.backgroundColor = '#111827'
-                        }}
-                        onBlur={(e) => {
-                          e.target.style.borderColor = errors.startTime ? '#ef4444' : '#4b5563'
-                          e.target.style.backgroundColor = '#1f2937'
-                        }}
-                      />
-                    </div>
-            {errors.startTime && (
-              <p style={{ color: '#ef4444', fontSize: '12px', margin: '4px 0 0 0' }}>
-                {errors.startTime}
-              </p>
-            )}
-          </div>
-
-          {/* End Time */}
-          <div>
-            <label style={{
-              display: 'block',
-              fontSize: '14px',
-              fontWeight: '500',
-              color: '#d1d5db',
-              marginBottom: '4px'
-            }}>
-              End Time
-            </label>
-                    <div
-                      style={{
-                        position: 'relative',
-                        width: '100%',
-                        cursor: 'pointer'
-                      }}
-                      onClick={() => {
-                        const input = document.getElementById('endTime') as HTMLInputElement
-                        input?.showPicker?.() || input?.focus()
-                      }}
-                    >
-                      <input
-                        id="endTime"
-                        type="time"
-                        value={formData.endTime}
-                        onChange={(e) => setFormData(prev => ({ ...prev, endTime: e.target.value }))}
-                        required
-                        style={{
-                          width: '100%',
-                          padding: '12px 16px',
-                          fontSize: '16px',
-                          border: errors.endTime ? '2px solid #ef4444' : '2px solid #4b5563',
-                          borderRadius: '8px',
-                          backgroundColor: '#1f2937',
-                          color: '#f9fafb',
-                          minHeight: '48px',
-                          cursor: 'pointer',
-                          transition: 'all 0.2s ease',
-                          boxSizing: 'border-box',
-                          pointerEvents: 'none' // Prevent direct interaction, use wrapper click
-                        }}
-                        onFocus={(e) => {
-                          e.target.style.borderColor = '#3b82f6'
-                          e.target.style.backgroundColor = '#111827'
-                        }}
-                        onBlur={(e) => {
-                          e.target.style.borderColor = errors.endTime ? '#ef4444' : '#4b5563'
-                          e.target.style.backgroundColor = '#1f2937'
-                        }}
-                      />
-                    </div>
-            {errors.endTime && (
-              <p style={{ color: '#ef4444', fontSize: '12px', margin: '4px 0 0 0' }}>
-                {errors.endTime}
-              </p>
-            )}
-          </div>
+        {/* Start Time */}
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-2">
+            Start Time
+          </label>
+          <TimePicker
+            value={formData.startTime}
+            onChange={(value) => setFormData(prev => ({ ...prev, startTime: value }))}
+            placeholder="Select start time"
+            className={errors.startTime ? 'border-red-500' : ''}
+          />
+          {errors.startTime && (
+            <p className="text-red-400 text-xs mt-1">
+              {errors.startTime}
+            </p>
+          )}
         </div>
 
-        {errors.submit && (
-          <p style={{ color: '#ef4444', fontSize: '14px', margin: 0 }}>
-            {errors.submit}
-          </p>
-        )}
+        {/* End Time */}
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-2">
+            End Time
+          </label>
+          <TimePicker
+            value={formData.endTime}
+            onChange={(value) => setFormData(prev => ({ ...prev, endTime: value }))}
+            placeholder="Select end time"
+            className={errors.endTime ? 'border-red-500' : ''}
+          />
+          {errors.endTime && (
+            <p className="text-red-400 text-xs mt-1">
+              {errors.endTime}
+            </p>
+          )}
+        </div>
+      </div>
 
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
+      {/* Duration Preview */}
+      {calculatedDuration && (
+        <div className="text-sm text-gray-400 flex items-center gap-1">
+          <span>⏱</span>
+          <span>{calculatedDuration} total</span>
+        </div>
+      )}
+
+      {/* Error Messages */}
+      {errors.submit && (
+        <div className="text-red-400 text-sm">
+          {errors.submit}
+        </div>
+      )}
+
+      {/* Action Buttons */}
+      <div className="pt-6 border-t border-gray-700">
+        <div className="flex justify-end gap-3">
           {onCancel && (
             <button
               type="button"
               onClick={onCancel}
-              style={{
-                padding: '8px 16px',
-                fontSize: '14px',
-                color: '#9ca3af',
-                backgroundColor: 'transparent',
-                border: '1px solid #4b5563',
-                borderRadius: '6px',
-                cursor: 'pointer'
-              }}
+              className="px-4 py-2 text-sm text-gray-400 bg-transparent border border-gray-600 rounded-lg hover:text-gray-200 hover:border-gray-500 transition-colors"
+              tabIndex={7}
             >
               Cancel
             </button>
@@ -407,24 +324,14 @@ export default function EntryForm({ onEntryCreated, onCancel, initialDate }: Ent
           <button
             type="submit"
             disabled={isSubmitting}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px',
-              padding: '8px 16px',
-              fontSize: '14px',
-              backgroundColor: isSubmitting ? '#6b7280' : '#3b82f6',
-              color: 'white',
-              border: 'none',
-              borderRadius: '6px',
-              cursor: isSubmitting ? 'not-allowed' : 'pointer'
-            }}
+            className="flex items-center gap-2 px-4 py-2 text-sm text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors"
+            tabIndex={6}
           >
             <Plus size={16} />
             {isSubmitting ? 'Adding...' : 'Add Entry'}
           </button>
         </div>
-      </form>
-    </div>
+      </div>
+    </form>
   )
 }

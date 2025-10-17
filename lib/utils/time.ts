@@ -126,6 +126,39 @@ export const getTimeBucket = (timestamp: string): 'Morning' | 'Afternoon' | 'Eve
   return 'Evening'
 }
 
+// Calculate duration between two times on the same date
+export const calculateDurationBetweenTimes = (startTime: string, endTime: string, date: string): number => {
+  try {
+    const startDateTime = new Date(`${date}T${startTime}`)
+    const endDateTime = new Date(`${date}T${endTime}`)
+    
+    // Handle case where end time is next day (e.g., 23:00 to 01:00)
+    if (endDateTime <= startDateTime) {
+      endDateTime.setDate(endDateTime.getDate() + 1)
+    }
+    
+    const diffInSeconds = Math.floor((endDateTime.getTime() - startDateTime.getTime()) / 1000)
+    return diffInSeconds / 60 // Convert to minutes with decimal precision
+  } catch (error) {
+    console.error('Error calculating duration:', error)
+    return 0
+  }
+}
+
+// Format duration in minutes to short format (e.g., "1h 30m" or "45m")
+export const formatDurationShort = (minutes: number): string => {
+  if (minutes < 1) return '0m'
+  
+  const hours = Math.floor(minutes / 60)
+  const mins = Math.floor(minutes % 60)
+  
+  if (hours > 0) {
+    return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`
+  }
+  
+  return `${mins}m`
+}
+
 // Generate time range options for reports
 export const getTimeRangeOptions = () => {
   const now = new Date()
