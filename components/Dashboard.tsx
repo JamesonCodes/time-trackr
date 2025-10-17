@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useEntries, useProjects, useRunningEntry, entryService } from '@/lib/db'
 import { useTimer } from '@/lib/hooks/useTimer'
 import { formatDate, formatTime, formatDuration, calculateDuration } from '@/lib/utils/time'
-import { Plus, Clock, FolderOpen } from 'lucide-react'
+import { Plus, Clock, FolderOpen, BarChart3 } from 'lucide-react'
 import EntryForm from './EntryForm'
 import EntryList from './EntryList'
 
@@ -56,32 +56,63 @@ export default function Dashboard() {
             </p>
           </div>
           
-          <a
-            href="/projects"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '10px 16px',
-              backgroundColor: '#374151',
-              color: '#f9fafb',
-              textDecoration: 'none',
-              borderRadius: '8px',
-              fontSize: '14px',
-              fontWeight: '500',
-              border: '1px solid #4b5563',
-              transition: 'all 0.2s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#4b5563'
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#374151'
-            }}
-          >
-            <FolderOpen size={16} />
-            Manage Projects
-          </a>
+          <div style={{
+            display: 'flex',
+            gap: '8px'
+          }}>
+            <a
+              href="/reports"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '10px 16px',
+                backgroundColor: '#374151',
+                color: '#f9fafb',
+                textDecoration: 'none',
+                borderRadius: '8px',
+                fontSize: '14px',
+                fontWeight: '500',
+                border: '1px solid #4b5563',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#4b5563'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = '#374151'
+              }}
+            >
+              <BarChart3 size={16} />
+              Reports
+            </a>
+            <a
+              href="/projects"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '10px 16px',
+                backgroundColor: '#374151',
+                color: '#f9fafb',
+                textDecoration: 'none',
+                borderRadius: '8px',
+                fontSize: '14px',
+                fontWeight: '500',
+                border: '1px solid #4b5563',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#4b5563'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = '#374151'
+              }}
+            >
+              <FolderOpen size={16} />
+              Projects
+            </a>
+          </div>
         </div>
 
         {/* Stats Cards */}
