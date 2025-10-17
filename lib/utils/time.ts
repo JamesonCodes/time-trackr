@@ -19,14 +19,16 @@ export const formatDurationHours = (minutes: number): string => {
 export const calculateDuration = (startTs: string, endTs: string): number => {
   const start = parseISO(startTs)
   const end = parseISO(endTs)
-  return differenceInMinutes(end, start)
+  const diffInSeconds = Math.floor((end.getTime() - start.getTime()) / 1000)
+  return diffInSeconds / 60 // Convert to minutes with decimal precision
 }
 
 // Calculate duration from start timestamp to now in minutes
 export const calculateDurationToNow = (startTs: string): number => {
   const start = parseISO(startTs)
   const now = new Date()
-  return differenceInMinutes(now, start)
+  const diffInSeconds = Math.floor((now.getTime() - start.getTime()) / 1000)
+  return diffInSeconds / 60 // Convert to minutes with decimal precision
 }
 
 // Format timestamp to readable date string

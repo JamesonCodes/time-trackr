@@ -46,9 +46,10 @@ export const useTimer = () => {
 
     if (timerState.isRunning && timerState.startTime) {
       interval = setInterval(() => {
+        const elapsed = calculateDurationToNow(timerState.startTime!)
         setTimerState(prev => ({
           ...prev,
-          elapsedTime: calculateDurationToNow(prev.startTime!)
+          elapsedTime: elapsed
         }))
       }, 1000)
     }
@@ -60,9 +61,12 @@ export const useTimer = () => {
 
   const startTimer = useCallback(async (projectId?: string, note?: string) => {
     try {
-      // Stop any existing running timer
-      if (timerState.isRunning) {
-        await stopTimer()
+      // Stop any existing running timer first
+      if (timerState.isRunning && timerState.currentEntry) {
+        const endTime = new Date().toISOString()
+        await entryService.update(timerState.currentEntry.id, {
+          endTs: endTime
+        })
       }
 
       const now = new Date().toISOString()
@@ -72,7 +76,6 @@ export const useTimer = () => {
         note,
         source: 'timer'
       })
-
       setTimerState({
         isRunning: true,
         elapsedTime: 0,
@@ -83,13 +86,14 @@ export const useTimer = () => {
       console.error('Failed to start timer:', error)
       throw error
     }
-  }, [timerState.isRunning])
+  }, [timerState.isRunning, timerState.currentEntry])
 
   const stopTimer = useCallback(async () => {
     try {
       if (timerState.currentEntry) {
+        const endTime = new Date().toISOString()
         await entryService.update(timerState.currentEntry.id, {
-          endTs: new Date().toISOString()
+          endTs: endTime
         })
       }
 
