@@ -148,44 +148,165 @@ export default function Dashboard() {
             </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-            <div className="flex items-center">
-              <Clock className="w-8 h-8 text-blue-500" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Today's Time</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {formatDuration(todayEntries.reduce((total, entry) => {
-                    if (entry.endTs) {
-                      return total + calculateDuration(entry.startTs, entry.endTs)
-                    }
-                    return total
-                  }, 0))}
-                </p>
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '16px',
+          marginBottom: '32px'
+        }}>
+          {/* Desktop: Horizontal layout, Mobile: Vertical stack */}
+          <div style={{
+            display: 'flex',
+            flexDirection: 'row',
+            gap: '16px',
+            flexWrap: 'wrap'
+          }}>
+            {/* Today's Time Card */}
+            <div style={{
+              flex: '1',
+              minWidth: '200px',
+              backgroundColor: '#1f2937',
+              border: '1px solid #374151',
+              borderRadius: '12px',
+              padding: '20px',
+              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
+            }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px'
+              }}>
+                <div style={{
+                  padding: '8px',
+                  backgroundColor: '#1e40af',
+                  borderRadius: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  <Clock size={20} color="#60a5fa" />
+                </div>
+                <div>
+                  <p style={{
+                    fontSize: '12px',
+                    fontWeight: '500',
+                    color: '#9ca3af',
+                    margin: '0 0 4px 0',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em'
+                  }}>
+                    Time Today
+                  </p>
+                  <p style={{
+                    fontSize: '24px',
+                    fontWeight: 'bold',
+                    color: '#f9fafb',
+                    margin: 0
+                  }}>
+                    {formatDuration(todayEntries.reduce((total, entry) => {
+                      if (entry.endTs) {
+                        return total + calculateDuration(entry.startTs, entry.endTs)
+                      }
+                      return total
+                    }, 0))}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-            <div className="flex items-center">
-              <FolderOpen className="w-8 h-8 text-green-500" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Projects</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {projects?.length || 0}
-                </p>
+            {/* Projects Card */}
+            <div style={{
+              flex: '1',
+              minWidth: '200px',
+              backgroundColor: '#1f2937',
+              border: '1px solid #374151',
+              borderRadius: '12px',
+              padding: '20px',
+              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
+            }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px'
+              }}>
+                <div style={{
+                  padding: '8px',
+                  backgroundColor: '#059669',
+                  borderRadius: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  <FolderOpen size={20} color="#6ee7b7" />
+                </div>
+                <div>
+                  <p style={{
+                    fontSize: '12px',
+                    fontWeight: '500',
+                    color: '#9ca3af',
+                    margin: '0 0 4px 0',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em'
+                  }}>
+                    Projects
+                  </p>
+                  <p style={{
+                    fontSize: '24px',
+                    fontWeight: 'bold',
+                    color: '#f9fafb',
+                    margin: 0
+                  }}>
+                    {projects?.length || 0}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-            <div className="flex items-center">
-              <Clock className="w-8 h-8 text-purple-500" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Entries</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {entries?.length || 0}
-                </p>
+            {/* Total Entries Card */}
+            <div style={{
+              flex: '1',
+              minWidth: '200px',
+              backgroundColor: '#1f2937',
+              border: '1px solid #374151',
+              borderRadius: '12px',
+              padding: '20px',
+              boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
+            }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px'
+              }}>
+                <div style={{
+                  padding: '8px',
+                  backgroundColor: '#7c3aed',
+                  borderRadius: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  <BarChart3 size={20} color="#c4b5fd" />
+                </div>
+                <div>
+                  <p style={{
+                    fontSize: '12px',
+                    fontWeight: '500',
+                    color: '#9ca3af',
+                    margin: '0 0 4px 0',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em'
+                  }}>
+                    Entries
+                  </p>
+                  <p style={{
+                    fontSize: '24px',
+                    fontWeight: 'bold',
+                    color: '#f9fafb',
+                    margin: 0
+                  }}>
+                    {entries?.length || 0}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
