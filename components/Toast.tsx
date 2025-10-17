@@ -60,15 +60,15 @@ const ToastComponent = ({ toast, onDismiss }: ToastProps) => {
   const getBackgroundColor = () => {
     switch (toast.type) {
       case 'success':
-        return 'bg-green-900/90 border-green-700'
+        return 'glass-tint-green border-green-600/30'
       case 'error':
-        return 'bg-red-900/90 border-red-700'
+        return 'glass-tint-red border-red-600/30'
       case 'warning':
-        return 'bg-yellow-900/90 border-yellow-700'
+        return 'glass-tint-amber border-yellow-600/30'
       case 'info':
-        return 'bg-blue-900/90 border-blue-700'
+        return 'glass-tint-blue border-blue-600/30'
       default:
-        return 'bg-gray-900/90 border-gray-700'
+        return 'glass-strong border-gray-600/30'
     }
   }
 
@@ -81,7 +81,7 @@ const ToastComponent = ({ toast, onDismiss }: ToastProps) => {
       }`}
     >
       <div
-        className={`${getBackgroundColor()} border rounded-lg shadow-lg backdrop-blur-sm p-4 flex items-start gap-3`}
+        className={`${getBackgroundColor()} rounded-lg shadow-lg p-4 flex items-start gap-3 glass-enter`}
       >
         {getIcon()}
         <div className="flex-1 min-w-0">

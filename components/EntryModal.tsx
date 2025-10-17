@@ -78,19 +78,19 @@ export default function EntryModal({ isOpen, onClose, onEntryCreated }: EntryMod
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-md" />
       
       {/* Modal */}
       <div
         ref={modalRef}
-        className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-gray-800 border border-gray-700 rounded-xl shadow-2xl"
+        className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto glass-strong rounded-xl shadow-2xl glass-enter"
         tabIndex={-1}
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-700">
+        <div className="flex items-center justify-between p-6 border-b border-gray-600/50">
           <div>
             <h2 id="modal-title" className="text-xl font-semibold text-gray-100">
               New Time Entry

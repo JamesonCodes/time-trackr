@@ -102,10 +102,10 @@ export default function Dashboard() {
             {/* Today's Time Card */}
             <div 
               onClick={() => handleStatCardClick('time')}
-              className="flex-1 min-w-[200px] bg-gray-800 border border-gray-700 rounded-xl p-5 shadow-sm cursor-pointer hover:border-gray-600 hover:shadow-lg transition-all duration-200"
+              className="flex-1 min-w-[200px] glass-card rounded-xl p-5 cursor-pointer glass-hover"
             >
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-600 rounded-lg flex items-center justify-center">
+                <div className="p-2 glass-tint-blue rounded-lg flex items-center justify-center">
                   <Clock size={20} className="text-blue-300" />
                 </div>
                 <div>
@@ -127,10 +127,10 @@ export default function Dashboard() {
             {/* Projects Card */}
             <div 
               onClick={() => handleStatCardClick('projects')}
-              className="flex-1 min-w-[200px] bg-gray-800 border border-gray-700 rounded-xl p-5 shadow-sm cursor-pointer hover:border-gray-600 hover:shadow-lg transition-all duration-200"
+              className="flex-1 min-w-[200px] glass-card rounded-xl p-5 cursor-pointer glass-hover"
             >
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-600 rounded-lg flex items-center justify-center">
+                <div className="p-2 glass-tint-green rounded-lg flex items-center justify-center">
                   <FolderOpen size={20} className="text-green-300" />
                 </div>
                 <div>
@@ -147,10 +147,10 @@ export default function Dashboard() {
             {/* Total Entries Card */}
             <div 
               onClick={() => handleStatCardClick('entries')}
-              className="flex-1 min-w-[200px] bg-gray-800 border border-gray-700 rounded-xl p-5 shadow-sm cursor-pointer hover:border-gray-600 hover:shadow-lg transition-all duration-200"
+              className="flex-1 min-w-[200px] glass-card rounded-xl p-5 cursor-pointer glass-hover"
             >
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-purple-600 rounded-lg flex items-center justify-center">
+                <div className="p-2 glass-tint-purple rounded-lg flex items-center justify-center">
                   <BarChart3 size={20} className="text-purple-300" />
                 </div>
                 <div>
@@ -168,17 +168,17 @@ export default function Dashboard() {
 
         {/* Running Timer Status */}
         {runningEntry && (
-          <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 mb-6">
+          <div className="glass-tint-green border border-green-600/30 rounded-lg p-4 mb-6 shadow-green-500/20">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-semibold text-green-800 dark:text-green-200">
+                <h3 className="text-lg font-semibold text-green-200">
                   Timer Running
                 </h3>
-                <p className="text-green-600 dark:text-green-400">
+                <p className="text-green-300">
                   {getProjectName(runningEntry.projectId)} • {runningEntry.note || 'No note'}
                 </p>
               </div>
-              <div className="text-2xl font-mono font-bold text-green-800 dark:text-green-200">
+              <div className="text-2xl font-mono font-bold text-green-100 drop-shadow-lg">
                 {timer.getFormattedElapsedTime()}
               </div>
             </div>
@@ -186,7 +186,7 @@ export default function Dashboard() {
         )}
 
             {/* Today's Entries Card */}
-            <div id="todays-entries" className="bg-gray-800 border border-gray-700 rounded-xl shadow-sm mb-8">
+            <div id="todays-entries" className="glass-card rounded-xl mb-8">
               {/* Card Header */}
               <div className="flex justify-between items-center px-6 py-5 border-b border-gray-700">
                 <h2 className="text-lg font-semibold text-gray-100">

@@ -152,10 +152,7 @@ export default function ProjectManagement() {
 
   if (projects?.length === 0 && !showCreateForm) {
     return (
-      <div style={{
-        textAlign: 'center',
-        padding: '64px 24px'
-      }}>
+      <div className="text-center py-16 px-6">
         <FolderOpen size={64} style={{ margin: '0 auto 24px', color: '#6b7280' }} />
         <h2 style={{
           fontSize: '24px',
@@ -174,20 +171,7 @@ export default function ProjectManagement() {
         </p>
         <button
           onClick={() => setShowCreateForm(true)}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '12px 24px',
-            backgroundColor: '#3b82f6',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            fontSize: '16px',
-            fontWeight: '500',
-            margin: '0 auto'
-          }}
+          className="flex items-center gap-2 px-6 py-3 glass-tint-blue text-white rounded-lg cursor-pointer text-base font-medium mx-auto glass-hover"
         >
           <Plus size={20} />
           Create First Project
@@ -199,46 +183,20 @@ export default function ProjectManagement() {
   return (
     <div>
       {/* Header with Create Button */}
-      <div style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: '24px'
-      }}>
-        <div>
-          <h2 style={{
-            fontSize: '20px',
-            fontWeight: '600',
-            color: '#f9fafb',
-            margin: '0 0 4px 0'
-          }}>
-            All Projects
-          </h2>
-          <p style={{
-            fontSize: '14px',
-            color: '#9ca3af',
-            margin: 0
-          }}>
-            {projects?.length || 0} projects
-          </p>
-        </div>
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h2 className="text-xl font-semibold text-gray-100 mb-1">
+              All Projects
+            </h2>
+            <p className="text-sm text-gray-400">
+              {projects?.length || 0} projects
+            </p>
+          </div>
         
         {!showCreateForm && !editingProject && (
           <button
             onClick={() => setShowCreateForm(true)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '10px 16px',
-              backgroundColor: '#3b82f6',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: '500'
-            }}
+            className="flex items-center gap-2 px-4 py-2.5 glass-tint-blue text-white rounded-lg cursor-pointer text-sm font-medium glass-hover"
           >
             <Plus size={16} />
             New Project
@@ -248,58 +206,24 @@ export default function ProjectManagement() {
 
       {/* Create/Edit Form */}
       {(showCreateForm || editingProject) && (
-        <div style={{
-          backgroundColor: '#1f2937',
-          border: '1px solid #374151',
-          borderRadius: '8px',
-          padding: '24px',
-          marginBottom: '24px'
-        }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '16px'
-          }}>
-            <h3 style={{
-              fontSize: '18px',
-              fontWeight: '600',
-              color: '#f9fafb',
-              margin: 0
-            }}>
+        <div className="glass-card rounded-lg p-6 mb-6 glass-enter">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-100">
               {editingProject ? 'Edit Project' : 'Create New Project'}
             </h3>
             <button
               onClick={editingProject ? cancelEdit : () => setShowCreateForm(false)}
-              style={{
-                padding: '8px',
-                backgroundColor: 'transparent',
-                border: 'none',
-                color: '#9ca3af',
-                cursor: 'pointer',
-                borderRadius: '4px'
-              }}
+              className="p-2 text-gray-400 hover:text-gray-100 cursor-pointer rounded"
             >
               ✕
             </button>
           </div>
 
           <form onSubmit={editingProject ? handleEdit : handleCreate}>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: '16px',
-              marginBottom: '16px'
-            }}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               {/* Project Name */}
               <div>
-                <label style={{
-                  display: 'block',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: '#d1d5db',
-                  marginBottom: '4px'
-                }}>
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Project Name
                 </label>
                 <input
@@ -307,15 +231,9 @@ export default function ProjectManagement() {
                   value={formData.name}
                   onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                   placeholder="Enter project name..."
-                  style={{
-                    width: '100%',
-                    padding: '10px 12px',
-                    fontSize: '14px',
-                    border: errors.name ? '2px solid #ef4444' : '1px solid #4b5563',
-                    borderRadius: '6px',
-                    backgroundColor: '#111827',
-                    color: '#f9fafb'
-                  }}
+                  className={`w-full px-3 py-2.5 text-sm glass-subtle rounded-md text-white ${
+                    errors.name ? 'border-2 border-red-500' : 'border border-gray-500'
+                  } focus:border-gray-400 focus:glass-card focus:outline-none`}
                 />
                 {errors.name && (
                   <p style={{ color: '#ef4444', fontSize: '12px', margin: '4px 0 0 0' }}>
@@ -326,36 +244,21 @@ export default function ProjectManagement() {
 
               {/* Color Picker */}
               <div>
-                <label style={{
-                  display: 'block',
-                  fontSize: '14px',
-                  fontWeight: '500',
-                  color: '#d1d5db',
-                  marginBottom: '8px'
-                }}>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   Color
                 </label>
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(6, 1fr)',
-                  gap: '8px'
-                }}>
+                <div className="grid grid-cols-6 gap-2">
                   {COLOR_OPTIONS.map(color => (
                     <button
                       key={color.value}
                       type="button"
                       onClick={() => setFormData(prev => ({ ...prev, color: color.value }))}
-                      style={{
-                        width: '40px',
-                        height: '40px',
-                            borderRadius: '8px',
-                            border: formData.color === color.value ? '3px solid #f9fafb' : '2px solid #4b5563',
-                            backgroundColor: color.value,
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                      }}
+                      className={`w-10 h-10 rounded-lg cursor-pointer flex items-center justify-center transition-all duration-200 ${
+                        formData.color === color.value 
+                          ? 'glass-strong border-2 border-white' 
+                          : 'glass-subtle border border-gray-500 hover:glass-card'
+                      }`}
+                      style={{ backgroundColor: color.value }}
                       title={color.name}
                     >
                       {formData.color === color.value && (
@@ -373,38 +276,22 @@ export default function ProjectManagement() {
               </p>
             )}
 
-            <div style={{
-              display: 'flex',
-              justifyContent: 'flex-end',
-              gap: '8px'
-            }}>
+            <div className="flex justify-end gap-2">
               <button
                 type="button"
                 onClick={editingProject ? cancelEdit : () => setShowCreateForm(false)}
-                style={{
-                  padding: '8px 16px',
-                  fontSize: '14px',
-                  color: '#9ca3af',
-                  backgroundColor: 'transparent',
-                  border: '1px solid #4b5563',
-                  borderRadius: '6px',
-                  cursor: 'pointer'
-                }}
+                className="px-4 py-2 text-sm text-gray-400 glass-subtle border border-gray-500 rounded-md cursor-pointer hover:glass-card"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting}
-                style={{
-                  padding: '8px 16px',
-                  fontSize: '14px',
-                  backgroundColor: isSubmitting ? '#6b7280' : '#3b82f6',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '6px',
-                  cursor: isSubmitting ? 'not-allowed' : 'pointer'
-                }}
+                className={`px-4 py-2 text-sm text-white border-none rounded-md ${
+                  isSubmitting 
+                    ? 'glass-subtle cursor-not-allowed' 
+                    : 'glass-tint-blue cursor-pointer hover:glass-card'
+                }`}
               >
                 {isSubmitting ? 'Saving...' : (editingProject ? 'Update' : 'Create')}
               </button>
@@ -414,30 +301,13 @@ export default function ProjectManagement() {
       )}
 
       {/* Projects List */}
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '12px'
-      }}>
+      <div className="flex flex-col gap-3">
         {projects?.map(project => (
           <div
             key={project.id}
-            style={{
-              backgroundColor: '#1f2937',
-              border: '1px solid #374151',
-              borderRadius: '8px',
-              padding: '16px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between'
-            }}
+            className="glass-card rounded-lg p-4 flex items-center justify-between glass-hover"
           >
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              flex: 1
-            }}>
+            <div className="flex items-center gap-3 flex-1">
               {/* Color Indicator */}
               <div
                 style={{
@@ -450,21 +320,11 @@ export default function ProjectManagement() {
               />
               
               {/* Project Info */}
-              <div style={{ flex: 1 }}>
-                <h4 style={{
-                  fontSize: '16px',
-                  fontWeight: '600',
-                  color: '#f9fafb',
-                  margin: '0 0 4px 0'
-                }}>
+              <div className="flex-1">
+                <h4 className="text-base font-semibold text-gray-100 mb-1">
                   {project.name}
                 </h4>
-                <div style={{
-                  display: 'flex',
-                  gap: '16px',
-                  fontSize: '14px',
-                  color: '#9ca3af'
-                }}>
+                <div className="flex gap-4 text-sm text-gray-400">
                   <span>{getProjectEntryCount(project.id)} entries</span>
                   <span>{formatDuration(getProjectTotalTime(project.id))} total</span>
                 </div>
@@ -472,34 +332,17 @@ export default function ProjectManagement() {
             </div>
 
             {/* Actions */}
-            <div style={{
-              display: 'flex',
-              gap: '8px'
-            }}>
+            <div className="flex gap-2">
               <button
                 onClick={() => startEdit(project)}
-                style={{
-                  padding: '6px',
-                  backgroundColor: 'transparent',
-                  border: '1px solid #4b5563',
-                  borderRadius: '4px',
-                  color: '#9ca3af',
-                  cursor: 'pointer'
-                }}
+                className="p-1.5 glass-subtle border border-gray-500 rounded text-gray-400 cursor-pointer hover:glass-card"
                 title="Edit project"
               >
                 <Edit size={14} />
               </button>
               <button
                 onClick={() => handleDelete(project.id)}
-                style={{
-                  padding: '6px',
-                  backgroundColor: 'transparent',
-                  border: '1px solid #4b5563',
-                  borderRadius: '4px',
-                  color: '#ef4444',
-                  cursor: 'pointer'
-                }}
+                className="p-1.5 glass-subtle border border-gray-500 rounded text-red-400 cursor-pointer hover:glass-card"
                 title="Delete project"
               >
                 <Trash2 size={14} />

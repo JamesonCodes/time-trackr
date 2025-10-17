@@ -56,10 +56,10 @@ export default function TimerBar() {
         {/* Mobile FAB */}
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className={`fixed bottom-4 right-4 z-50 w-16 h-16 rounded-full shadow-lg transition-all duration-300 ${
+          className={`fixed bottom-4 right-4 z-50 w-16 h-16 rounded-full glass-strong transition-all duration-300 ${
             timer.isRunning 
-              ? 'bg-green-600 hover:bg-green-700 shadow-green-500/30' 
-              : 'bg-blue-600 hover:bg-blue-700 shadow-blue-500/30'
+              ? 'glass-tint-green shadow-green-500/30' 
+              : 'glass-tint-blue shadow-blue-500/30'
           }`}
         >
           <div className="flex flex-col items-center justify-center text-white">
@@ -74,8 +74,8 @@ export default function TimerBar() {
 
         {/* Mobile Expanded Panel */}
         {isExpanded && (
-          <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={() => setIsExpanded(false)}>
-            <div className="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 rounded-t-xl p-6" onClick={(e) => e.stopPropagation()}>
+          <div className="fixed inset-0 z-40 bg-black/60 backdrop-blur-md" onClick={() => setIsExpanded(false)}>
+            <div className="fixed bottom-0 left-0 right-0 glass-strong border-t border-gray-600 rounded-t-xl p-6 glass-enter" onClick={(e) => e.stopPropagation()}>
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-100">Timer</h3>
                 <button
@@ -129,7 +129,7 @@ export default function TimerBar() {
                         value={note}
                         onChange={(e) => setNote(e.target.value)}
                         placeholder="Note..."
-                        className="w-full px-3 py-2 text-sm border border-gray-500 rounded-md bg-gray-700 text-white placeholder-gray-400 focus:border-gray-400 focus:bg-gray-600 focus:outline-none"
+                        className="w-full px-3 py-2 text-sm glass-subtle border border-gray-500 rounded-md text-white placeholder-gray-400 focus:border-gray-400 focus:glass-card focus:outline-none"
                       />
                     </div>
                     <button
@@ -169,10 +169,10 @@ export default function TimerBar() {
   return (
     <>
       {/* Desktop Timer Bar */}
-      <div className={`fixed bottom-0 left-0 right-0 z-50 border-t shadow-lg backdrop-blur-sm transition-all duration-500 ${
+      <div className={`fixed bottom-0 left-0 right-0 z-50 border-t shadow-lg transition-all duration-500 ${
         timer.isRunning 
-          ? 'bg-green-800/90 border-green-600 shadow-green-500/20' 
-          : 'bg-gray-700/80 border-gray-600 shadow-gray-500/10'
+          ? 'glass-tint-green border-green-600 shadow-green-500/20' 
+          : 'glass-strong border-gray-600 shadow-gray-500/10'
       }`}>
         <div className="max-w-6xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between gap-4">
@@ -181,7 +181,7 @@ export default function TimerBar() {
               {/* Timer Status with Animation */}
               <div className="flex items-center gap-3">
                 {timer.isRunning && (
-                  <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/50" />
+                  <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400/50 glass-subtle" />
                 )}
                 <div className={`text-3xl font-mono font-bold tracking-wider transition-all duration-300 ${
                   timer.isRunning 
@@ -238,7 +238,7 @@ export default function TimerBar() {
                       value={note}
                       onChange={(e) => setNote(e.target.value)}
                       placeholder="Note..."
-                      className="px-3 py-2 text-sm border border-gray-500 rounded-md bg-gray-600 text-white placeholder-gray-400 w-40 focus:border-gray-400 focus:bg-gray-500 focus:outline-none transition-all duration-200"
+                      className="px-3 py-2 text-sm glass-subtle border border-gray-500 rounded-md text-white placeholder-gray-400 w-40 focus:border-gray-400 focus:glass-card focus:outline-none transition-all duration-200"
                     />
                   </div>
 

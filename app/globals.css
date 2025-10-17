@@ -26,6 +26,154 @@ body {
   }
 }
 
+/* Glassmorphic Design System */
+:root {
+  --glass-primary: rgba(31, 41, 55, 0.7);
+  --glass-elevated: rgba(31, 41, 55, 0.85);
+  --glass-subtle: rgba(31, 41, 55, 0.4);
+  --glass-tint-blue: rgba(59, 130, 246, 0.15);
+  --glass-tint-green: rgba(16, 185, 129, 0.15);
+  --glass-tint-purple: rgba(139, 92, 246, 0.15);
+  --glass-tint-red: rgba(239, 68, 68, 0.15);
+  --glass-tint-amber: rgba(245, 158, 11, 0.15);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+  --glass-shadow-strong: 0 12px 40px rgba(0, 0, 0, 0.5);
+  --glass-blur: 16px;
+  --glass-blur-strong: 20px;
+  --glass-blur-subtle: 8px;
+}
+
+/* Glassmorphic Utility Classes */
+.glass-card {
+  background: var(--glass-primary);
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  transition: all 300ms ease-out;
+}
+
+.glass-card:hover {
+  background: var(--glass-elevated);
+  backdrop-filter: blur(var(--glass-blur-strong)) saturate(200%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-strong)) saturate(200%);
+  transform: translateY(-2px);
+  box-shadow: var(--glass-shadow-strong);
+}
+
+.glass-strong {
+  background: var(--glass-elevated);
+  backdrop-filter: blur(var(--glass-blur-strong)) saturate(200%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-strong)) saturate(200%);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow-strong);
+}
+
+.glass-subtle {
+  background: var(--glass-subtle);
+  backdrop-filter: blur(var(--glass-blur-subtle)) saturate(150%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-subtle)) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.glass-hover {
+  transition: all 300ms ease-out;
+}
+
+.glass-hover:hover {
+  background: var(--glass-elevated);
+  backdrop-filter: blur(var(--glass-blur-strong)) saturate(200%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-strong)) saturate(200%);
+  transform: scale(1.02);
+  box-shadow: var(--glass-shadow-strong);
+}
+
+/* Tinted Glass Variants */
+.glass-tint-blue {
+  background: var(--glass-tint-blue);
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.glass-tint-green {
+  background: var(--glass-tint-green);
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.glass-tint-purple {
+  background: var(--glass-tint-purple);
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.glass-tint-red {
+  background: var(--glass-tint-red);
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.glass-tint-amber {
+  background: var(--glass-tint-amber);
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+/* Glass Animation Classes */
+.glass-enter {
+  animation: glassFadeIn 200ms ease-out;
+}
+
+.glass-exit {
+  animation: glassFadeOut 200ms ease-in;
+}
+
+@keyframes glassFadeIn {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    transform: translateY(0);
+  }
+}
+
+@keyframes glassFadeOut {
+  from {
+    opacity: 1;
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+    transform: translateY(-10px);
+  }
+}
+
+/* Mobile Responsive Glass */
+@media (max-width: 768px) {
+  :root {
+    --glass-blur: 8px;
+    --glass-blur-strong: 12px;
+    --glass-blur-subtle: 4px;
+  }
+}
+
 /* Custom scrollbar styles for TimePicker */
 .scrollbar-thin {
   scrollbar-width: thin;

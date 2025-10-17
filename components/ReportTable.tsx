@@ -149,9 +149,9 @@ export default function ReportTable({ selectedWeek, onWeekChange }: ReportTableP
       <div className="mb-8">
         <div className="flex flex-col sm:flex-row gap-4">
           {/* Total Time Card */}
-          <div className="flex-1 min-w-[200px] bg-gray-800 border border-gray-700 rounded-xl p-5 shadow-sm">
+          <div className="flex-1 min-w-[200px] glass-card rounded-xl p-5">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-600 rounded-lg flex items-center justify-center">
+              <div className="p-2 glass-tint-blue rounded-lg flex items-center justify-center">
                 <Clock size={20} className="text-blue-300" />
               </div>
               <div>
@@ -169,9 +169,9 @@ export default function ReportTable({ selectedWeek, onWeekChange }: ReportTableP
           </div>
 
           {/* Projects Card */}
-          <div className="flex-1 min-w-[200px] bg-gray-800 border border-gray-700 rounded-xl p-5 shadow-sm">
+          <div className="flex-1 min-w-[200px] glass-card rounded-xl p-5">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-green-600 rounded-lg flex items-center justify-center">
+              <div className="p-2 glass-tint-green rounded-lg flex items-center justify-center">
                 <FolderOpen size={20} className="text-green-300" />
               </div>
               <div>
@@ -189,9 +189,9 @@ export default function ReportTable({ selectedWeek, onWeekChange }: ReportTableP
           </div>
 
           {/* Daily Average Card */}
-          <div className="flex-1 min-w-[200px] bg-gray-800 border border-gray-700 rounded-xl p-5 shadow-sm">
+          <div className="flex-1 min-w-[200px] glass-card rounded-xl p-5">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-amber-600 rounded-lg flex items-center justify-center">
+              <div className="p-2 glass-tint-amber rounded-lg flex items-center justify-center">
                 <TrendingUp size={20} className="text-amber-300" />
               </div>
               <div>
@@ -211,7 +211,7 @@ export default function ReportTable({ selectedWeek, onWeekChange }: ReportTableP
       </div>
 
       {/* Week Navigation & Timeline - Secondary Section */}
-      <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 mb-6">
+      <div className="glass-card rounded-xl p-6 mb-6">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-lg font-semibold text-gray-100">
             Week Overview
@@ -222,7 +222,7 @@ export default function ReportTable({ selectedWeek, onWeekChange }: ReportTableP
       </div>
 
       {/* Daily Breakdown - Tertiary Section */}
-      <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 mb-6">
+      <div className="glass-card rounded-xl p-6 mb-6">
         <h3 className="text-lg font-semibold text-gray-100 mb-4">
           Daily Breakdown
         </h3>
@@ -236,12 +236,9 @@ export default function ReportTable({ selectedWeek, onWeekChange }: ReportTableP
             return (
               <div
                 key={index}
-                className={`bg-gray-700 border border-gray-600 rounded-lg overflow-hidden transition-all duration-200 ${
+                className={`glass-subtle rounded-lg overflow-hidden transition-all duration-200 ${
                   isEmpty ? 'opacity-50' : 'opacity-100'
                 } ${index > 0 ? 'mt-3' : ''}`}
-                style={{
-                  boxShadow: isEmpty ? 'none' : '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
-                }}
               >
                 {/* Day Header */}
                 <button
@@ -288,15 +285,15 @@ export default function ReportTable({ selectedWeek, onWeekChange }: ReportTableP
 
                 {/* Day Content - Collapsible */}
                 {!isEmpty && isExpanded && (
-                  <div className="border-t border-gray-600">
+                  <div className="border-t border-gray-600/50">
                     {/* Project Breakdown */}
                     {Object.keys(day.projectBreakdown).length > 0 && (
-                      <div className="p-4 bg-gray-800">
+                      <div className="p-4 glass-subtle">
                         <div className="flex flex-wrap gap-2">
                           {Object.entries(day.projectBreakdown).map(([projectName, data]) => (
                             <div
                               key={projectName}
-                              className="flex items-center gap-2 px-3 py-1.5 bg-gray-700 rounded-lg text-xs"
+                              className="flex items-center gap-2 px-3 py-1.5 glass-subtle rounded-lg text-xs"
                             >
                               <div
                                 className="w-2 h-2 rounded-full"
@@ -323,7 +320,7 @@ export default function ReportTable({ selectedWeek, onWeekChange }: ReportTableP
 
       {/* Project Summary - Quaternary Section */}
       {Object.keys(projectTotals).length > 0 && (
-        <div className="bg-gray-800 border border-gray-700 rounded-xl p-6">
+        <div className="glass-card rounded-xl p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-gray-100">
               Project Summary
@@ -343,7 +340,7 @@ export default function ReportTable({ selectedWeek, onWeekChange }: ReportTableP
                 return (
                   <div
                     key={projectName}
-                    className="bg-gray-700 border border-gray-600 rounded-lg p-4 hover:bg-gray-600 transition-colors duration-200"
+                    className="glass-subtle rounded-lg p-4 glass-hover"
                   >
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-3">
