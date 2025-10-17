@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useTimer } from '@/lib/hooks/useTimer'
 import { useProjects } from '@/lib/db'
 import ProjectSelector from './ProjectSelector'
@@ -8,9 +8,22 @@ import ProjectSelector from './ProjectSelector'
 export default function TimerBar() {
   const [selectedProjectId, setSelectedProjectId] = useState<string | undefined>()
   const [note, setNote] = useState('')
+  const [isMobile, setIsMobile] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(false)
   
   const timer = useTimer()
   const projects = useProjects()
+
+  // Check if mobile on mount and resize
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   // Debug: Log projects to see if they're loading
   React.useEffect(() => {
@@ -36,9 +49,126 @@ export default function TimerBar() {
 
   const selectedProject = projects?.find(p => p.id === selectedProjectId)
 
+  // Mobile FAB
+  if (isMobile) {
+    return (
+      <>
+        {/* Mobile FAB */}
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className={`fixed bottom-4 right-4 z-50 w-16 h-16 rounded-full shadow-lg transition-all duration-300 ${
+            timer.isRunning 
+              ? 'bg-green-600 hover:bg-green-700 shadow-green-500/30' 
+              : 'bg-blue-600 hover:bg-blue-700 shadow-blue-500/30'
+          }`}
+        >
+          <div className="flex flex-col items-center justify-center text-white">
+            <div className="text-xs font-mono font-bold">
+              {timer.isRunning ? timer.getFormattedElapsedTime() : '00:00'}
+            </div>
+            {timer.isRunning && (
+              <div className="w-2 h-2 bg-green-300 rounded-full animate-pulse mt-1" />
+            )}
+          </div>
+        </button>
+
+        {/* Mobile Expanded Panel */}
+        {isExpanded && (
+          <div className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={() => setIsExpanded(false)}>
+            <div className="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 rounded-t-xl p-6" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-gray-100">Timer</h3>
+                <button
+                  onClick={() => setIsExpanded(false)}
+                  className="p-2 text-gray-400 hover:text-gray-100"
+                >
+                  <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                  </svg>
+                </button>
+              </div>
+
+              {/* Timer Display */}
+              <div className="text-center mb-6">
+                <div className={`text-4xl font-mono font-bold mb-2 ${
+                  timer.isRunning ? 'text-green-100' : 'text-gray-300'
+                }`}>
+                  {timer.isRunning ? timer.getFormattedElapsedTime() : '00:00:00'}
+                </div>
+                {timer.isRunning && timer.currentEntry && (
+                  <div className="flex items-center justify-center gap-2">
+                    {selectedProject && (
+                      <div 
+                        className="px-2 py-1 rounded text-xs font-semibold text-white uppercase tracking-wide"
+                        style={{ backgroundColor: selectedProject.color || '#6B7280' }}
+                      >
+                        {selectedProject.name}
+                      </div>
+                    )}
+                    {timer.currentEntry.note && (
+                      <div className="text-sm text-gray-300 italic">
+                        {timer.currentEntry.note}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Controls */}
+              <div className="space-y-4">
+                {!timer.isRunning && (
+                  <>
+                    <div className="space-y-3">
+                      <ProjectSelector
+                        selectedProjectId={selectedProjectId}
+                        onProjectSelect={setSelectedProjectId}
+                        placeholder="Project"
+                      />
+                      <input
+                        type="text"
+                        value={note}
+                        onChange={(e) => setNote(e.target.value)}
+                        placeholder="Note..."
+                        className="w-full px-3 py-2 text-sm border border-gray-500 rounded-md bg-gray-700 text-white placeholder-gray-400 focus:border-gray-400 focus:bg-gray-600 focus:outline-none"
+                      />
+                    </div>
+                    <button
+                      onClick={handleStartTimer}
+                      className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-colors"
+                    >
+                      <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z"/>
+                      </svg>
+                      Start Timer
+                    </button>
+                  </>
+                )}
+
+                {timer.isRunning && (
+                  <button
+                    onClick={handleStopTimer}
+                    className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-colors"
+                  >
+                    <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M6 6h12v12H6z"/>
+                    </svg>
+                    Stop Timer
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Add bottom padding to prevent content from being hidden behind the FAB */}
+        <div className="h-20" />
+      </>
+    )
+  }
+
   return (
     <>
-      {/* Floating Timer Bar */}
+      {/* Desktop Timer Bar */}
       <div className={`fixed bottom-0 left-0 right-0 z-50 border-t shadow-lg backdrop-blur-sm transition-all duration-500 ${
         timer.isRunning 
           ? 'bg-green-800/90 border-green-600 shadow-green-500/20' 

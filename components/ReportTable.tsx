@@ -3,7 +3,9 @@
 import React, { useState, useEffect } from 'react'
 import { useEntries, useProjects } from '@/lib/db'
 import { format, startOfWeek, endOfWeek, isWithinInterval, eachDayOfInterval, isSameDay } from 'date-fns'
-import { Clock, TrendingUp, Calendar, FolderOpen } from 'lucide-react'
+import { Clock, TrendingUp, Calendar, FolderOpen, ChevronDown, ChevronRight } from 'lucide-react'
+import WeekSelector from './WeekSelector'
+import WeekTimelineBar from './WeekTimelineBar'
 
 interface DaySummary {
   date: Date
@@ -12,11 +14,16 @@ interface DaySummary {
   projectBreakdown: Record<string, { minutes: number; count: number }>
 }
 
-export default function ReportTable() {
-  const [selectedWeek, setSelectedWeek] = useState(new Date())
+interface ReportTableProps {
+  selectedWeek: Date
+  onWeekChange: (date: Date) => void
+}
+
+export default function ReportTable({ selectedWeek, onWeekChange }: ReportTableProps) {
   const [weekData, setWeekData] = useState<DaySummary[]>([])
   const [totalWeekMinutes, setTotalWeekMinutes] = useState(0)
   const [projectTotals, setProjectTotals] = useState<Record<string, number>>({})
+  const [expandedDays, setExpandedDays] = useState<Set<string>>(new Set())
 
   const entries = useEntries()
   const projects = useProjects()
@@ -93,6 +100,16 @@ export default function ReportTable() {
 
   }, [entries, projects, selectedWeek])
 
+  const toggleDay = (dateString: string) => {
+    const newExpandedDays = new Set(expandedDays)
+    if (newExpandedDays.has(dateString)) {
+      newExpandedDays.delete(dateString)
+    } else {
+      newExpandedDays.add(dateString)
+    }
+    setExpandedDays(newExpandedDays)
+  }
+
   const formatDuration = (minutes: number) => {
     const hours = Math.floor(minutes / 60)
     const mins = minutes % 60
@@ -114,16 +131,12 @@ export default function ReportTable() {
 
   if (!entries || entries.length === 0) {
     return (
-      <div style={{
-        textAlign: 'center',
-        padding: '48px 24px',
-        color: '#9ca3af'
-      }}>
-        <Calendar size={48} style={{ margin: '0 auto 16px', opacity: 0.5 }} />
-        <p style={{ fontSize: '16px', margin: 0 }}>
+      <div className="text-center py-12 px-6 text-gray-400">
+        <Calendar size={48} className="mx-auto mb-4 opacity-50" />
+        <p className="text-base mb-2">
           No time entries found
         </p>
-        <p style={{ fontSize: '14px', margin: '8px 0 0 0', opacity: 0.7 }}>
+        <p className="text-sm opacity-70">
           Start tracking time to see your weekly reports
         </p>
       </div>
@@ -132,311 +145,239 @@ export default function ReportTable() {
 
   return (
     <div>
-      {/* Summary Cards */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-        gap: '16px',
-        marginBottom: '32px'
-      }}>
-        <div style={{
-          backgroundColor: '#374151',
-          border: '1px solid #4b5563',
-          borderRadius: '8px',
-          padding: '16px'
-        }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            marginBottom: '8px'
-          }}>
-            <Clock size={20} style={{ color: '#3b82f6' }} />
-            <span style={{
-              fontSize: '14px',
-              fontWeight: '500',
-              color: '#d1d5db'
-            }}>
-              Total Time
-            </span>
+      {/* Weekly Summary Cards - Primary Section */}
+      <div className="mb-8">
+        <div className="flex flex-col sm:flex-row gap-4">
+          {/* Total Time Card */}
+          <div className="flex-1 min-w-[200px] bg-gray-800 border border-gray-700 rounded-xl p-5 shadow-sm">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-blue-600 rounded-lg flex items-center justify-center">
+                <Clock size={20} className="text-blue-300" />
+              </div>
+              <div>
+                <p className="text-xs font-medium text-gray-400 mb-1 uppercase tracking-wide">
+                  Total Time
+                </p>
+                <p className="text-2xl font-bold text-gray-100">
+                  {formatDuration(totalWeekMinutes)}
+                </p>
+                <p className="text-xs text-gray-400">
+                  {formatDurationHours(totalWeekMinutes)} hours
+                </p>
+              </div>
+            </div>
           </div>
-          <div style={{
-            fontSize: '24px',
-            fontWeight: 'bold',
-            color: '#f9fafb'
-          }}>
-            {formatDuration(totalWeekMinutes)}
-          </div>
-          <div style={{
-            fontSize: '12px',
-            color: '#9ca3af'
-          }}>
-            {formatDurationHours(totalWeekMinutes)} hours
-          </div>
-        </div>
 
-        <div style={{
-          backgroundColor: '#374151',
-          border: '1px solid #4b5563',
-          borderRadius: '8px',
-          padding: '16px'
-        }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            marginBottom: '8px'
-          }}>
-            <FolderOpen size={20} style={{ color: '#10b981' }} />
-            <span style={{
-              fontSize: '14px',
-              fontWeight: '500',
-              color: '#d1d5db'
-            }}>
-              Projects
-            </span>
+          {/* Projects Card */}
+          <div className="flex-1 min-w-[200px] bg-gray-800 border border-gray-700 rounded-xl p-5 shadow-sm">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-green-600 rounded-lg flex items-center justify-center">
+                <FolderOpen size={20} className="text-green-300" />
+              </div>
+              <div>
+                <p className="text-xs font-medium text-gray-400 mb-1 uppercase tracking-wide">
+                  Projects
+                </p>
+                <p className="text-2xl font-bold text-gray-100">
+                  {Object.keys(projectTotals).length}
+                </p>
+                <p className="text-xs text-gray-400">
+                  active this week
+                </p>
+              </div>
+            </div>
           </div>
-          <div style={{
-            fontSize: '24px',
-            fontWeight: 'bold',
-            color: '#f9fafb'
-          }}>
-            {Object.keys(projectTotals).length}
-          </div>
-          <div style={{
-            fontSize: '12px',
-            color: '#9ca3af'
-          }}>
-            active this week
-          </div>
-        </div>
 
-        <div style={{
-          backgroundColor: '#374151',
-          border: '1px solid #4b5563',
-          borderRadius: '8px',
-          padding: '16px'
-        }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            marginBottom: '8px'
-          }}>
-            <TrendingUp size={20} style={{ color: '#f59e0b' }} />
-            <span style={{
-              fontSize: '14px',
-              fontWeight: '500',
-              color: '#d1d5db'
-            }}>
-              Daily Average
-            </span>
-          </div>
-          <div style={{
-            fontSize: '24px',
-            fontWeight: 'bold',
-            color: '#f9fafb'
-          }}>
-            {formatDuration(Math.round(totalWeekMinutes / 7))}
-          </div>
-          <div style={{
-            fontSize: '12px',
-            color: '#9ca3af'
-          }}>
-            per day
+          {/* Daily Average Card */}
+          <div className="flex-1 min-w-[200px] bg-gray-800 border border-gray-700 rounded-xl p-5 shadow-sm">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-amber-600 rounded-lg flex items-center justify-center">
+                <TrendingUp size={20} className="text-amber-300" />
+              </div>
+              <div>
+                <p className="text-xs font-medium text-gray-400 mb-1 uppercase tracking-wide">
+                  Daily Average
+                </p>
+                <p className="text-2xl font-bold text-gray-100">
+                  {formatDuration(Math.round(totalWeekMinutes / 7))}
+                </p>
+                <p className="text-xs text-gray-400">
+                  per day
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Daily Breakdown */}
-      <div>
-        <h3 style={{
-          fontSize: '16px',
-          fontWeight: '600',
-          color: '#f9fafb',
-          margin: '0 0 16px 0'
-        }}>
+      {/* Week Navigation & Timeline - Secondary Section */}
+      <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 mb-6">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-lg font-semibold text-gray-100">
+            Week Overview
+          </h2>
+        </div>
+        <WeekSelector selectedWeek={selectedWeek} onWeekChange={onWeekChange} />
+        <WeekTimelineBar weekData={weekData} />
+      </div>
+
+      {/* Daily Breakdown - Tertiary Section */}
+      <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 mb-6">
+        <h3 className="text-lg font-semibold text-gray-100 mb-4">
           Daily Breakdown
         </h3>
         
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '12px'
-        }}>
-          {weekData.map((day, index) => (
-            <div
-              key={index}
-              style={{
-                backgroundColor: '#374151',
-                border: '1px solid #4b5563',
-                borderRadius: '8px',
-                padding: '16px'
-              }}
-            >
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: '12px'
-              }}>
-                <div>
-                  <div style={{
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    color: '#f9fafb'
-                  }}>
-                    {format(day.date, 'EEEE, MMMM d')}
-                  </div>
-                  <div style={{
-                    fontSize: '14px',
-                    color: '#9ca3af'
-                  }}>
-                    {day.entries.length} entries
-                  </div>
-                </div>
-                <div style={{
-                  textAlign: 'right'
-                }}>
-                  <div style={{
-                    fontSize: '18px',
-                    fontWeight: 'bold',
-                    color: '#f9fafb'
-                  }}>
-                    {formatDuration(day.totalMinutes)}
-                  </div>
-                  <div style={{
-                    fontSize: '12px',
-                    color: '#9ca3af'
-                  }}>
-                    {formatDurationHours(day.totalMinutes)}h
-                  </div>
-                </div>
-              </div>
-
-              {/* Project Breakdown */}
-              {Object.keys(day.projectBreakdown).length > 0 && (
-                <div style={{
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                  gap: '8px'
-                }}>
-                  {Object.entries(day.projectBreakdown).map(([projectName, data]) => (
-                    <div
-                      key={projectName}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                        padding: '4px 8px',
-                        backgroundColor: '#1f2937',
-                        borderRadius: '6px',
-                        fontSize: '12px'
-                      }}
-                    >
-                      <div
-                        style={{
-                          width: '8px',
-                          height: '8px',
-                          borderRadius: '50%',
-                          backgroundColor: getProjectColor(projectName)
-                        }}
-                      />
-                      <span style={{ color: '#d1d5db' }}>
-                        {projectName}
-                      </span>
-                      <span style={{ color: '#9ca3af' }}>
-                        {formatDuration(data.minutes)}
-                      </span>
+        <div className="space-y-3">
+          {weekData.map((day, index) => {
+            const dateString = day.date.toISOString().split('T')[0]
+            const isExpanded = expandedDays.has(dateString)
+            const isEmpty = day.totalMinutes === 0
+            
+            return (
+              <div
+                key={index}
+                className={`bg-gray-700 border border-gray-600 rounded-lg overflow-hidden transition-all duration-200 ${
+                  isEmpty ? 'opacity-50' : 'opacity-100'
+                } ${index > 0 ? 'mt-3' : ''}`}
+                style={{
+                  boxShadow: isEmpty ? 'none' : '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
+                }}
+              >
+                {/* Day Header */}
+                <button
+                  onClick={() => !isEmpty && toggleDay(dateString)}
+                  disabled={isEmpty}
+                  className={`w-full flex items-center justify-between p-4 transition-colors duration-200 ${
+                    isEmpty 
+                      ? 'cursor-default' 
+                      : 'hover:bg-gray-600 cursor-pointer'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    {!isEmpty && (
+                      isExpanded ? (
+                        <ChevronDown size={16} className="text-gray-400" />
+                      ) : (
+                        <ChevronRight size={16} className="text-gray-400" />
+                      )
+                    )}
+                    <div className="text-left">
+                      <div className={`text-sm font-semibold ${
+                        isEmpty ? 'text-gray-500' : 'text-gray-100'
+                      }`}>
+                        {format(day.date, 'EEEE, MMMM d')}
+                      </div>
+                      <div className={`text-xs ${
+                        isEmpty ? 'text-gray-600' : 'text-gray-400'
+                      }`}>
+                        {isEmpty ? 'No time tracked' : `${day.entries.length} entries`}
+                      </div>
                     </div>
-                  ))}
-                </div>
-              )}
+                  </div>
+                  {!isEmpty && (
+                    <div className="text-right">
+                      <div className="text-lg font-bold text-gray-100">
+                        {formatDuration(day.totalMinutes)}
+                      </div>
+                      <div className="text-xs text-gray-400">
+                        {formatDurationHours(day.totalMinutes)}h
+                      </div>
+                    </div>
+                  )}
+                </button>
 
-              {day.totalMinutes === 0 && (
-                <div style={{
-                  fontSize: '14px',
-                  color: '#6b7280',
-                  fontStyle: 'italic'
-                }}>
-                  No time tracked
-                </div>
-              )}
-            </div>
-          ))}
+                {/* Day Content - Collapsible */}
+                {!isEmpty && isExpanded && (
+                  <div className="border-t border-gray-600">
+                    {/* Project Breakdown */}
+                    {Object.keys(day.projectBreakdown).length > 0 && (
+                      <div className="p-4 bg-gray-800">
+                        <div className="flex flex-wrap gap-2">
+                          {Object.entries(day.projectBreakdown).map(([projectName, data]) => (
+                            <div
+                              key={projectName}
+                              className="flex items-center gap-2 px-3 py-1.5 bg-gray-700 rounded-lg text-xs"
+                            >
+                              <div
+                                className="w-2 h-2 rounded-full"
+                                style={{ backgroundColor: getProjectColor(projectName) }}
+                              />
+                              <span className="text-gray-200">
+                                {projectName}
+                              </span>
+                              <span className="text-gray-400">
+                                {formatDuration(data.minutes)}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )
+          })}
         </div>
       </div>
 
-      {/* Project Summary */}
+      {/* Project Summary - Quaternary Section */}
       {Object.keys(projectTotals).length > 0 && (
-        <div style={{ marginTop: '32px' }}>
-          <h3 style={{
-            fontSize: '16px',
-            fontWeight: '600',
-            color: '#f9fafb',
-            margin: '0 0 16px 0'
-          }}>
-            Project Summary
-          </h3>
+        <div className="bg-gray-800 border border-gray-700 rounded-xl p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-100">
+              Project Summary
+            </h3>
+            <div className="text-xs text-gray-500">
+              Bar length represents total tracked time this week
+            </div>
+          </div>
           
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '8px'
-          }}>
+          <div className="space-y-3">
             {Object.entries(projectTotals)
               .sort(([,a], [,b]) => b - a)
-              .map(([projectName, minutes]) => (
-                <div
-                  key={projectName}
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    padding: '12px 16px',
-                    backgroundColor: '#374151',
-                    borderRadius: '6px'
-                  }}
-                >
-                  <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px'
-                  }}>
-                    <div
-                      style={{
-                        width: '12px',
-                        height: '12px',
-                        borderRadius: '50%',
-                        backgroundColor: getProjectColor(projectName)
-                      }}
-                    />
-                    <span style={{
-                      fontSize: '14px',
-                      color: '#f9fafb'
-                    }}>
-                      {projectName}
-                    </span>
-                  </div>
-                  <div style={{
-                    textAlign: 'right'
-                  }}>
-                    <div style={{
-                      fontSize: '14px',
-                      fontWeight: '600',
-                      color: '#f9fafb'
-                    }}>
-                      {formatDuration(minutes)}
+              .map(([projectName, minutes]) => {
+                const maxMinutes = Math.max(...Object.values(projectTotals))
+                const percentage = maxMinutes > 0 ? (minutes / maxMinutes) * 100 : 0
+                
+                return (
+                  <div
+                    key={projectName}
+                    className="bg-gray-700 border border-gray-600 rounded-lg p-4 hover:bg-gray-600 transition-colors duration-200"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-3">
+                        <div
+                          className="w-3 h-3 rounded-full"
+                          style={{ backgroundColor: getProjectColor(projectName) }}
+                        />
+                        <span className="text-sm font-medium text-gray-100">
+                          {projectName}
+                        </span>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm font-bold text-gray-100">
+                          {formatDuration(minutes)}
+                        </div>
+                        <div className="text-xs text-gray-400">
+                          {formatDurationHours(minutes)}h
+                        </div>
+                      </div>
                     </div>
-                    <div style={{
-                      fontSize: '12px',
-                      color: '#9ca3af'
-                    }}>
-                      {formatDurationHours(minutes)}h
+                    
+                    {/* Progress Bar */}
+                    <div className="w-full bg-gray-600 rounded-full h-2">
+                      <div
+                        className="h-2 rounded-full transition-all duration-300"
+                        style={{
+                          width: `${percentage}%`,
+                          backgroundColor: getProjectColor(projectName)
+                        }}
+                      />
                     </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
           </div>
         </div>
       )}

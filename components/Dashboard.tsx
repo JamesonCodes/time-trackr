@@ -1,16 +1,18 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useEntries, useProjects, useRunningEntry, entryService } from '@/lib/db'
 import { useTimer } from '@/lib/hooks/useTimer'
 import { formatDate, formatTime, formatDuration, calculateDuration } from '@/lib/utils/time'
 import { Plus, Clock, FolderOpen, BarChart3, Settings } from 'lucide-react'
-import EntryForm from './EntryForm'
-import EntryList from './EntryList'
+import EntryModal from './EntryModal'
+import GroupedEntryList from './GroupedEntryList'
 import CSVExportButton from './CSVExportButton'
 
 export default function Dashboard() {
-  const [showManualEntry, setShowManualEntry] = useState(false)
+  const [showEntryModal, setShowEntryModal] = useState(false)
+  const router = useRouter()
 
   const entries = useEntries()
   const projects = useProjects()
@@ -27,6 +29,26 @@ export default function Dashboard() {
     if (!projectId) return 'No Project'
     const project = projects?.find(p => p.id === projectId)
     return project?.name || 'Unknown Project'
+  }
+
+  const handleStatCardClick = (type: 'time' | 'projects' | 'entries') => {
+    switch (type) {
+      case 'time':
+        router.push('/reports?filter=today')
+        break
+      case 'projects':
+        router.push('/projects')
+        break
+      case 'entries':
+        // Scroll to entries section or navigate to reports
+        const entriesSection = document.getElementById('todays-entries')
+        if (entriesSection) {
+          entriesSection.scrollIntoView({ behavior: 'smooth' })
+        } else {
+          router.push('/reports?filter=today')
+        }
+        break
+    }
   }
 
   return (
@@ -78,7 +100,10 @@ export default function Dashboard() {
         <div className="mb-8">
           <div className="flex flex-col sm:flex-row gap-4">
             {/* Today's Time Card */}
-            <div className="flex-1 min-w-[200px] bg-gray-800 border border-gray-700 rounded-xl p-5 shadow-sm">
+            <div 
+              onClick={() => handleStatCardClick('time')}
+              className="flex-1 min-w-[200px] bg-gray-800 border border-gray-700 rounded-xl p-5 shadow-sm cursor-pointer hover:border-gray-600 hover:shadow-lg transition-all duration-200"
+            >
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-blue-600 rounded-lg flex items-center justify-center">
                   <Clock size={20} className="text-blue-300" />
@@ -100,7 +125,10 @@ export default function Dashboard() {
             </div>
 
             {/* Projects Card */}
-            <div className="flex-1 min-w-[200px] bg-gray-800 border border-gray-700 rounded-xl p-5 shadow-sm">
+            <div 
+              onClick={() => handleStatCardClick('projects')}
+              className="flex-1 min-w-[200px] bg-gray-800 border border-gray-700 rounded-xl p-5 shadow-sm cursor-pointer hover:border-gray-600 hover:shadow-lg transition-all duration-200"
+            >
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-green-600 rounded-lg flex items-center justify-center">
                   <FolderOpen size={20} className="text-green-300" />
@@ -117,7 +145,10 @@ export default function Dashboard() {
             </div>
 
             {/* Total Entries Card */}
-            <div className="flex-1 min-w-[200px] bg-gray-800 border border-gray-700 rounded-xl p-5 shadow-sm">
+            <div 
+              onClick={() => handleStatCardClick('entries')}
+              className="flex-1 min-w-[200px] bg-gray-800 border border-gray-700 rounded-xl p-5 shadow-sm cursor-pointer hover:border-gray-600 hover:shadow-lg transition-all duration-200"
+            >
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-purple-600 rounded-lg flex items-center justify-center">
                   <BarChart3 size={20} className="text-purple-300" />
@@ -155,43 +186,38 @@ export default function Dashboard() {
         )}
 
             {/* Today's Entries Card */}
-            <div className="bg-gray-800 border border-gray-700 rounded-xl shadow-sm mb-8">
+            <div id="todays-entries" className="bg-gray-800 border border-gray-700 rounded-xl shadow-sm mb-8">
               {/* Card Header */}
               <div className="flex justify-between items-center px-6 py-5 border-b border-gray-700">
                 <h2 className="text-lg font-semibold text-gray-100">
                   Today's Entries
                 </h2>
                 
-                {/* Add Manual Entry Button */}
-                {!showManualEntry && (
-                  <button
-                    onClick={() => setShowManualEntry(true)}
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors duration-200"
-                  >
-                    <Plus size={16} />
-                    Add Entry
-                  </button>
-                )}
+                {/* Add Entry Button */}
+                <button
+                  onClick={() => setShowEntryModal(true)}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors duration-200"
+                >
+                  <Plus size={16} />
+                  Add Entry
+                </button>
               </div>
 
               {/* Card Content */}
               <div className="px-6 pb-6">
-                {showManualEntry ? (
-                  <div className="mt-4">
-                    <EntryForm 
-                      onEntryCreated={() => setShowManualEntry(false)}
-                      onCancel={() => setShowManualEntry(false)}
-                    />
-                  </div>
-                ) : (
-                  <EntryList 
-                    dateFilter={today}
-                    showDateHeaders={false}
-                  />
-                )}
+                <GroupedEntryList 
+                  dateFilter={today}
+                />
               </div>
             </div>
       </div>
+
+      {/* Entry Modal */}
+      <EntryModal
+        isOpen={showEntryModal}
+        onClose={() => setShowEntryModal(false)}
+        onEntryCreated={() => setShowEntryModal(false)}
+      />
     </div>
   )
 }

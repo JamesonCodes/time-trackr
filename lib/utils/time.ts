@@ -118,6 +118,14 @@ export const getRelativeTime = (timestamp: string): string => {
   return formatDate(timestamp)
 }
 
+// Get time bucket for grouping entries by time of day
+export const getTimeBucket = (timestamp: string): 'Morning' | 'Afternoon' | 'Evening' => {
+  const hour = parseISO(timestamp).getHours()
+  if (hour < 12) return 'Morning'
+  if (hour < 18) return 'Afternoon'
+  return 'Evening'
+}
+
 // Generate time range options for reports
 export const getTimeRangeOptions = () => {
   const now = new Date()

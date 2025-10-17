@@ -1,0 +1,113 @@
+'use client'
+
+import React, { useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
+import { X } from 'lucide-react'
+import EntryForm from './EntryForm'
+
+interface EntryModalProps {
+  isOpen: boolean
+  onClose: () => void
+  onEntryCreated?: () => void
+}
+
+export default function EntryModal({ isOpen, onClose, onEntryCreated }: EntryModalProps) {
+  const modalRef = useRef<HTMLDivElement>(null)
+  const previousActiveElement = useRef<HTMLElement | null>(null)
+
+  // Focus trap and ESC key handling
+  useEffect(() => {
+    if (!isOpen) return
+
+    // Store the previously focused element
+    previousActiveElement.current = document.activeElement as HTMLElement
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose()
+      }
+    }
+
+    const handleClickOutside = (e: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
+        onClose()
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    document.addEventListener('mousedown', handleClickOutside)
+
+    // Focus the modal
+    modalRef.current?.focus()
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+      document.removeEventListener('mousedown', handleClickOutside)
+      
+      // Return focus to the previously focused element
+      if (previousActiveElement.current) {
+        previousActiveElement.current.focus()
+      }
+    }
+  }, [isOpen, onClose])
+
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+
+    return () => {
+      document.body.style.overflow = 'unset'
+    }
+  }, [isOpen])
+
+  if (!isOpen) return null
+
+  const handleEntryCreated = () => {
+    onEntryCreated?.()
+    onClose()
+  }
+
+  return createPortal(
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+      
+      {/* Modal */}
+      <div
+        ref={modalRef}
+        className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-gray-800 border border-gray-700 rounded-xl shadow-2xl"
+        tabIndex={-1}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-gray-700">
+          <h2 id="modal-title" className="text-xl font-semibold text-gray-100">
+            Add Entry
+          </h2>
+          <button
+            onClick={onClose}
+            className="p-2 text-gray-400 hover:text-gray-100 hover:bg-gray-700 rounded-lg transition-colors duration-200"
+            aria-label="Close modal"
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="p-6">
+          <EntryForm
+            onEntryCreated={handleEntryCreated}
+            onCancel={onClose}
+          />
+        </div>
+      </div>
+    </div>,
+    document.body
+  )
+}
