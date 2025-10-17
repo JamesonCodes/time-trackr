@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { useProjects, entryService } from '@/lib/db'
 import { formatDate, formatTime } from '@/lib/utils/time'
 import { Plus, X } from 'lucide-react'
+import ProjectSelector from './ProjectSelector'
 
 interface EntryFormProps {
   onEntryCreated?: () => void
@@ -169,26 +170,11 @@ export default function EntryForm({ onEntryCreated, onCancel, initialDate }: Ent
             }}>
               Project
             </label>
-            <select
-              value={formData.projectId}
-              onChange={(e) => setFormData(prev => ({ ...prev, projectId: e.target.value }))}
-              style={{
-                width: '100%',
-                padding: '8px 12px',
-                fontSize: '14px',
-                border: '1px solid #4b5563',
-                borderRadius: '6px',
-                backgroundColor: '#374151',
-                color: '#f9fafb'
-              }}
-            >
-              <option value="">No Project</option>
-              {projects?.map(project => (
-                <option key={project.id} value={project.id}>
-                  {project.name}
-                </option>
-              ))}
-            </select>
+            <ProjectSelector
+              selectedProjectId={formData.projectId || undefined}
+              onProjectSelect={(projectId) => setFormData(prev => ({ ...prev, projectId: projectId || '' }))}
+              placeholder="No Project"
+            />
           </div>
 
           {/* Note */}

@@ -32,13 +32,56 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            TimeTrackr
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Track your time locally and privately
-          </p>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+          marginBottom: '32px'
+        }}>
+          <div>
+            <h1 style={{
+              fontSize: '32px',
+              fontWeight: 'bold',
+              color: '#f9fafb',
+              margin: '0 0 8px 0'
+            }}>
+              TimeTrackr
+            </h1>
+            <p style={{
+              fontSize: '16px',
+              color: '#9ca3af',
+              margin: 0
+            }}>
+              Track your time locally and privately
+            </p>
+          </div>
+          
+          <a
+            href="/projects"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '10px 16px',
+              backgroundColor: '#374151',
+              color: '#f9fafb',
+              textDecoration: 'none',
+              borderRadius: '8px',
+              fontSize: '14px',
+              fontWeight: '500',
+              border: '1px solid #4b5563',
+              transition: 'all 0.2s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = '#4b5563'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#374151'
+            }}
+          >
+            <FolderOpen size={16} />
+            Manage Projects
+          </a>
         </div>
 
         {/* Stats Cards */}

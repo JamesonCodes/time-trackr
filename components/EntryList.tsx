@@ -52,10 +52,10 @@ export default function EntryList({
     return groups
   }, {} as Record<string, typeof filteredEntries>)
 
-  // Sort entries within each group by start time
+  // Sort entries within each group by start time (most recent first)
   Object.keys(groupedEntries).forEach(date => {
     groupedEntries[date].sort((a, b) => 
-      new Date(a.startTs).getTime() - new Date(b.startTs).getTime()
+      new Date(b.startTs).getTime() - new Date(a.startTs).getTime()
     )
   })
 

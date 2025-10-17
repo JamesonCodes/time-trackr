@@ -1,22 +1,26 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { useTimer } from '@/lib/hooks/useTimer'
 import { useProjects } from '@/lib/db'
+import ProjectSelector from './ProjectSelector'
 
 export default function TimerBar() {
-  const [showProjectSelector, setShowProjectSelector] = useState(false)
   const [selectedProjectId, setSelectedProjectId] = useState<string | undefined>()
   const [note, setNote] = useState('')
   
   const timer = useTimer()
   const projects = useProjects()
 
+  // Debug: Log projects to see if they're loading
+  React.useEffect(() => {
+    console.log('TimerBar projects:', projects)
+  }, [projects])
+
   const handleStartTimer = async () => {
     try {
       await timer.startTimer(selectedProjectId, note.trim() || undefined)
       setNote('')
-      setShowProjectSelector(false)
     } catch (error) {
       console.error('Failed to start timer:', error)
     }
@@ -85,99 +89,12 @@ export default function TimerBar() {
               {!timer.isRunning ? (
                 <>
                   {/* Project Selector */}
-                  <div style={{ position: 'relative' }}>
-                    <button
-                      onClick={() => setShowProjectSelector(!showProjectSelector)}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '4px',
-                        padding: '8px 12px',
-                        fontSize: '14px',
-                        border: '1px solid #4b5563',
-                        borderRadius: '6px',
-                        backgroundColor: '#374151',
-                        color: '#f9fafb',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      <span>
-                        {selectedProject ? selectedProject.name : 'Select Project'}
-                      </span>
-                      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </button>
-
-                    {showProjectSelector && (
-                      <div style={{
-                        position: 'absolute',
-                        bottom: '100%',
-                        marginBottom: '8px',
-                        left: 0,
-                        width: '192px',
-                        backgroundColor: '#1f2937',
-                        border: '1px solid #374151',
-                        borderRadius: '6px',
-                        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-                        zIndex: 10
-                      }}>
-                        <div style={{ padding: '8px' }}>
-                          <button
-                            onClick={() => {
-                              setSelectedProjectId(undefined)
-                              setShowProjectSelector(false)
-                            }}
-                            style={{
-                              width: '100%',
-                              textAlign: 'left',
-                              padding: '4px 8px',
-                              fontSize: '14px',
-                              backgroundColor: 'transparent',
-                              color: '#f9fafb',
-                              border: 'none',
-                              cursor: 'pointer',
-                              borderRadius: '4px'
-                            }}
-                          >
-                            No Project
-                          </button>
-                          {projects?.map((project) => (
-                            <button
-                              key={project.id}
-                              onClick={() => {
-                                setSelectedProjectId(project.id)
-                                setShowProjectSelector(false)
-                              }}
-                              style={{
-                                width: '100%',
-                                textAlign: 'left',
-                                padding: '4px 8px',
-                                fontSize: '14px',
-                                backgroundColor: 'transparent',
-                                color: '#f9fafb',
-                                border: 'none',
-                                cursor: 'pointer',
-                                borderRadius: '4px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '8px'
-                              }}
-                            >
-                              <div
-                                style={{
-                                  width: '12px',
-                                  height: '12px',
-                                  borderRadius: '50%',
-                                  backgroundColor: project.color || '#6B7280'
-                                }}
-                              />
-                              <span>{project.name}</span>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
+                  <div style={{ minWidth: '200px' }}>
+                    <ProjectSelector
+                      selectedProjectId={selectedProjectId}
+                      onProjectSelect={setSelectedProjectId}
+                      placeholder="Select Project"
+                    />
                   </div>
 
                   {/* Note Input */}
