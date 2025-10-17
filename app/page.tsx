@@ -1,3 +1,5 @@
+import DatabaseTest from '@/components/DatabaseTest'
+
 export default function Home() {
   return (
     <main className="min-h-screen bg-white dark:bg-gray-900">
@@ -5,9 +7,10 @@ export default function Home() {
         <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-8">
           TimeTrackr
         </h1>
-        <p className="text-gray-600 dark:text-gray-300">
-          Local-first time tracking app - coming soon!
+        <p className="text-gray-600 dark:text-gray-300 mb-8">
+          Local-first time tracking app - Phase 2 Database Layer Complete!
         </p>
+        <DatabaseTest />
       </div>
     </main>
   )
