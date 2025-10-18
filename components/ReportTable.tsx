@@ -1,9 +1,10 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { useEntries, useProjects } from '@/lib/db'
+import { useEntries, useProjects, entryService } from '@/lib/db'
 import { format, startOfWeek, endOfWeek, isWithinInterval, eachDayOfInterval, isSameDay } from 'date-fns'
-import { Clock, TrendingUp, Calendar, ChevronDown, ChevronRight } from 'lucide-react'
+import { calculateDuration } from '@/lib/utils/time'
+import { Clock, TrendingUp, Calendar, ChevronDown, ChevronRight, Edit, Trash2 } from 'lucide-react'
 import WeekSelector from './WeekSelector'
 import WeekTimelineBar from './WeekTimelineBar'
 
@@ -25,6 +26,8 @@ export default function ReportTable({ selectedWeek, onWeekChange, selectedProjec
   const [weekData, setWeekData] = useState<DaySummary[]>([])
   const [totalWeekMinutes, setTotalWeekMinutes] = useState(0)
   const [expandedDays, setExpandedDays] = useState<Set<string>>(new Set())
+  const [editingEntry, setEditingEntry] = useState<string | null>(null)
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
 
   const entries = useEntries()
   const projects = useProjects()
@@ -122,6 +125,29 @@ export default function ReportTable({ selectedWeek, onWeekChange, selectedProjec
 
   const formatDurationHours = (minutes: number) => {
     return (minutes / 60).toFixed(1)
+  }
+
+  const getProjectColor = (projectName: string) => {
+    if (projectName === 'No Project') return '#9ca3af' // gray-400 for better contrast
+    const project = projects?.find(p => p.name === projectName)
+    return project?.color || '#6b7280'
+  }
+
+  const handleEditEntry = (entryId: string) => {
+    setEditingEntry(entryId)
+  }
+
+  const handleDeleteEntry = async (entryId: string) => {
+    try {
+      await entryService.delete(entryId)
+      setDeleteConfirm(null)
+    } catch (error) {
+      console.error('Failed to delete entry:', error)
+    }
+  }
+
+  const handleCancelEdit = () => {
+    setEditingEntry(null)
   }
 
 
@@ -311,6 +337,66 @@ export default function ReportTable({ selectedWeek, onWeekChange, selectedProjec
                         </div>
                       </div>
                     )}
+
+                    {/* Individual Entries */}
+                    <div className="p-4 space-y-2">
+                      {day.entries.map((entry) => {
+                        const projectName = projects?.find(p => p.id === entry.projectId)?.name || 'No Project'
+                        const startTime = format(new Date(entry.startTs), 'HH:mm')
+                        const endTime = entry.endTs ? format(new Date(entry.endTs), 'HH:mm') : 'Running'
+                        const duration = entry.endTs ? calculateDuration(entry.startTs, entry.endTs) : '0m'
+                        
+                        return (
+                          <div
+                            key={entry.id}
+                            className="group flex items-center justify-between p-3 bg-gray-700/50 rounded-lg hover:bg-gray-600/50 transition-colors duration-200"
+                          >
+                            <div className="flex items-center gap-3 flex-1 min-w-0">
+                              <div
+                                className="w-3 h-3 rounded-full flex-shrink-0"
+                                style={{ backgroundColor: getProjectColor(projectName) }}
+                              />
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <span className="text-sm font-medium text-gray-100 truncate">
+                                    {projectName}
+                                  </span>
+                                  <span className="text-xs text-gray-400">
+                                    {startTime} - {endTime}
+                                  </span>
+                                </div>
+                                {entry.note && (
+                                  <div className="text-xs text-gray-300 truncate">
+                                    {entry.note}
+                                  </div>
+                                )}
+                              </div>
+                              <div className="text-sm font-mono text-gray-200 flex-shrink-0">
+                                {formatDuration(parseInt(duration))}
+                              </div>
+                            </div>
+                            
+                            {/* Action Buttons */}
+                            <div className="flex items-center gap-1 ml-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                              <button
+                                onClick={() => handleEditEntry(entry.id)}
+                                className="p-1.5 text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 rounded transition-colors duration-200"
+                                title="Edit entry"
+                              >
+                                <Edit size={14} />
+                              </button>
+                              <button
+                                onClick={() => setDeleteConfirm(entry.id)}
+                                className="p-1.5 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors duration-200"
+                                title="Delete entry"
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
                   </div>
                 )}
               </div>
@@ -319,6 +405,33 @@ export default function ReportTable({ selectedWeek, onWeekChange, selectedProjec
         </div>
       </div>
 
+      {/* Delete Confirmation Modal */}
+      {deleteConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="bg-gray-800 border border-gray-600 rounded-lg p-6 max-w-md mx-4">
+            <h3 className="text-lg font-semibold text-gray-100 mb-2">
+              Delete Entry
+            </h3>
+            <p className="text-gray-300 mb-6">
+              Are you sure you want to delete this time entry? This action cannot be undone.
+            </p>
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => setDeleteConfirm(null)}
+                className="px-4 py-2 text-gray-300 hover:text-gray-100 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleDeleteEntry(deleteConfirm)}
+                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
