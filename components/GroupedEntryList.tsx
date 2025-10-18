@@ -279,25 +279,25 @@ export default function GroupedEntryList({ dateFilter, projectFilter }: GroupedE
           const isExpanded = expandedGroups.has(groupKey)
           
           return (
-            <div key={groupKey} className="bg-gray-700 border border-gray-600 rounded-lg overflow-hidden">
+            <div key={groupKey} className="bg-gray-700 border border-gray-600 rounded-lg">
               {/* Group Header */}
               <button
                 onClick={() => toggleGroup(groupKey)}
-                className="w-full flex items-center justify-between p-4 hover:bg-gray-600 transition-colors duration-200"
+                className="w-full flex items-center justify-between p-3 sm:p-4 hover:bg-gray-600 transition-colors duration-200 min-h-[60px] sm:min-h-0"
                 role="button"
                 aria-expanded={isExpanded}
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 flex-1">
                   {isExpanded ? (
-                    <ChevronDown size={16} className="text-gray-400" />
+                    <ChevronDown size={18} className="text-gray-400 flex-shrink-0" />
                   ) : (
-                    <ChevronRight size={16} className="text-gray-400" />
+                    <ChevronRight size={18} className="text-gray-400 flex-shrink-0" />
                   )}
-                  <div className="text-left">
-                    <h3 className="text-sm font-semibold text-gray-100">
+                  <div className="text-left flex-1">
+                    <h3 className="text-base sm:text-sm font-semibold text-gray-100">
                       {getGroupName(groupKey)}
                     </h3>
-                    <p className="text-xs text-gray-400">
+                    <p className="text-sm sm:text-xs text-gray-400">
                       {group.entries.length} entries • {formatDuration(group.totalDuration)}
                     </p>
                   </div>
@@ -398,51 +398,28 @@ export default function GroupedEntryList({ dateFilter, projectFilter }: GroupedE
                           </div>
                         </div>
                       ) : (
-                        <div className="group flex items-center justify-between p-3 bg-gray-700/50 rounded-lg hover:bg-gray-600/50 transition-colors duration-200">
-                          {/* Mobile Layout */}
-                          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 flex-1 min-w-0">
-                            <div className="flex items-center gap-3 min-w-0 flex-1">
+                        <div className="group p-4 bg-gray-700/50 rounded-lg hover:bg-gray-600/50 transition-colors duration-200">
+                          <div className="space-y-2">
+                            <div className="flex items-center gap-3">
                               <div
                                 className="w-3 h-3 rounded-full flex-shrink-0"
                                 style={{ backgroundColor: getProjectColor(entry.projectId) }}
                               />
-                              <div className="min-w-0 flex-1">
-                                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mb-1">
-                                  <span className="text-sm font-medium text-gray-100 truncate">
-                                    {getProjectName(entry.projectId)}
-                                  </span>
-                                  <span className="text-xs text-gray-400">
-                                    {formatTime(entry.startTs)} - {entry.endTs ? formatTime(entry.endTs) : 'Running'}
-                                  </span>
-                                </div>
-                                {entry.note && (
-                                  <div className="text-xs text-gray-300 truncate">
-                                    {entry.note}
-                                  </div>
-                                )}
+                              <div className="text-sm font-medium text-gray-100">
+                                {getProjectName(entry.projectId)}
+                              </div>
+                              <div className="text-sm font-mono text-gray-200 ml-auto">
+                                {entry.endTs ? formatDuration(calculateDuration(entry.startTs, entry.endTs)) : 'Running...'}
                               </div>
                             </div>
-                            <div className="text-sm font-mono text-gray-200 flex-shrink-0">
-                              {entry.endTs ? formatDuration(calculateDuration(entry.startTs, entry.endTs)) : 'Running...'}
+                            <div className="text-xs text-gray-400">
+                              {formatTime(entry.startTs)} - {entry.endTs ? formatTime(entry.endTs) : 'Running'}
                             </div>
-                          </div>
-                          
-                          {/* Action Buttons - Always visible on mobile */}
-                          <div className="flex items-center gap-1 ml-3 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200">
-                            <button
-                              onClick={() => handleEdit(entry)}
-                              className="p-2 sm:p-1.5 text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 rounded transition-colors duration-200 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 touch-manipulation"
-                              title="Edit entry"
-                            >
-                              <Edit size={16} className="sm:w-3.5 sm:h-3.5" />
-                            </button>
-                            <button
-                              onClick={() => handleDelete(entry.id)}
-                              className="p-2 sm:p-1.5 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors duration-200 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 touch-manipulation"
-                              title="Delete entry"
-                            >
-                              <Trash2 size={16} className="sm:w-3.5 sm:h-3.5" />
-                            </button>
+                            {entry.note && (
+                              <div className="text-xs text-gray-300">
+                                {entry.note}
+                              </div>
+                            )}
                           </div>
                         </div>
                       )}

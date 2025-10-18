@@ -221,7 +221,7 @@ export default function EntryList({
                 ) : (
                   <>
                         {/* Mobile Layout - Stacked */}
-                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 flex-1 min-w-0">
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 flex-1">
                           {/* Project Badge */}
                           <div
                             className="px-3 py-1.5 rounded text-xs font-semibold text-white min-w-[90px] text-center uppercase tracking-wide flex-shrink-0"
@@ -231,7 +231,7 @@ export default function EntryList({
                           </div>
 
                           {/* Time Range */}
-                          <div className="min-w-0 flex-1">
+                          <div className="flex-1">
                             <div className="text-sm font-medium text-gray-100 mb-0.5">
                               {formatTime(entry.startTs)} - {entry.endTs ? formatTime(entry.endTs) : 'Running'}
                             </div>
@@ -242,8 +242,8 @@ export default function EntryList({
 
                           {/* Note */}
                           {entry.note && (
-                            <div className="flex-1 min-w-0 sm:min-w-[120px]">
-                              <div className="text-sm text-gray-300 truncate">
+                            <div className="flex-1 sm:min-w-[120px]">
+                              <div className="text-sm text-gray-300">
                                 {entry.note}
                               </div>
                             </div>

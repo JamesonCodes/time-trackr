@@ -473,43 +473,48 @@ export default function ReportTable({ selectedWeek, onWeekChange, selectedProjec
                             ) : (
                               /* Display Mode */
                               <>
-                                <div className="flex items-center gap-3 flex-1 min-w-0">
-                                  <div
-                                    className="w-3 h-3 rounded-full flex-shrink-0"
-                                    style={{ backgroundColor: getProjectColor(projectName) }}
-                                  />
-                                  <div className="min-w-0 flex-1">
-                                    <div className="flex items-center gap-2 mb-1">
-                                      <span className="text-sm font-medium text-gray-100 truncate">
+                                <div className="space-y-2">
+                                  {/* Top row: Project name and duration */}
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                                      <div
+                                        className="w-3 h-3 rounded-full flex-shrink-0"
+                                        style={{ backgroundColor: getProjectColor(projectName) }}
+                                      />
+                                      <div className="text-sm font-medium text-gray-100 truncate">
                                         {projectName}
-                                      </span>
-                                      <span className="text-xs text-gray-400">
-                                        {startTime} - {endTime}
-                                      </span>
-                                    </div>
-                                    {entry.note && (
-                                      <div className="text-xs text-gray-300 truncate">
-                                        {entry.note}
                                       </div>
-                                    )}
+                                    </div>
+                                    <div className="text-sm font-mono text-gray-200 flex-shrink-0 ml-3">
+                                      {formatDuration(parseInt(duration))}
+                                    </div>
                                   </div>
-                                  <div className="text-sm font-mono text-gray-200 flex-shrink-0">
-                                    {formatDuration(parseInt(duration))}
+                                  
+                                  {/* Time range */}
+                                  <div className="text-xs text-gray-400">
+                                    {startTime} - {endTime}
                                   </div>
+                                  
+                                  {/* Note */}
+                                  {entry.note && (
+                                    <div className="text-xs text-gray-300">
+                                      {entry.note}
+                                    </div>
+                                  )}
                                 </div>
                                 
                                 {/* Action Buttons */}
-                                <div className="flex items-center gap-1 ml-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                <div className="flex items-center gap-0.5 ml-2 opacity-60 hover:opacity-100 transition-opacity duration-200">
                                   <button
                                     onClick={() => handleEditEntry(entry.id)}
-                                    className="p-1.5 text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 rounded transition-colors duration-200"
+                                    className="p-1.5 text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 rounded transition-colors duration-200 min-h-[32px] min-w-[32px] flex items-center justify-center"
                                     title="Edit entry"
                                   >
                                     <Edit size={14} />
                                   </button>
                                   <button
                                     onClick={() => setDeleteConfirm(entry.id)}
-                                    className="p-1.5 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors duration-200"
+                                    className="p-1.5 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors duration-200 min-h-[32px] min-w-[32px] flex items-center justify-center"
                                     title="Delete entry"
                                   >
                                     <Trash2 size={14} />
