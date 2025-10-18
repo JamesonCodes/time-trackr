@@ -4,6 +4,9 @@ import React, { useState } from 'react'
 import { useEntries, useProjects, entryService } from '@/lib/db'
 import { formatTime, formatDuration, calculateDuration, getTimeBucket } from '@/lib/utils/time'
 import { Edit, Trash2, Clock, ChevronDown, ChevronRight, MoreHorizontal } from 'lucide-react'
+import TimePicker from './TimePicker'
+import DatePicker from './DatePicker'
+import ProjectSelector from './ProjectSelector'
 
 interface GroupedEntryListProps {
   dateFilter?: string
@@ -27,6 +30,7 @@ export default function GroupedEntryList({ dateFilter, projectFilter }: GroupedE
   const [editingEntry, setEditingEntry] = useState<string | null>(null)
   const [editForm, setEditForm] = useState({
     projectId: '',
+    startDate: '',
     startTime: '',
     endTime: '',
     note: ''
@@ -134,10 +138,24 @@ export default function GroupedEntryList({ dateFilter, projectFilter }: GroupedE
 
   const handleEdit = (entry: any) => {
     setEditingEntry(entry.id)
+    
+    // Convert to 12-hour format for TimePicker
+    const startDate = new Date(entry.startTs)
+    const endDate = entry.endTs ? new Date(entry.endTs) : null
+    
+    const formatTimeForPicker = (date: Date) => {
+      const hour = date.getHours()
+      const minute = date.getMinutes()
+      const period = hour >= 12 ? 'PM' : 'AM'
+      const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour
+      return `${displayHour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')} ${period}`
+    }
+
     setEditForm({
       projectId: entry.projectId || '',
-      startTime: entry.startTs.split('T')[1].substring(0, 5),
-      endTime: entry.endTs ? entry.endTs.split('T')[1].substring(0, 5) : '',
+      startDate: entry.startTs.split('T')[0],
+      startTime: formatTimeForPicker(startDate),
+      endTime: endDate ? formatTimeForPicker(endDate) : '',
       note: entry.note || ''
     })
   }
@@ -147,19 +165,34 @@ export default function GroupedEntryList({ dateFilter, projectFilter }: GroupedE
       const entry = entries?.find(e => e.id === entryId)
       if (!entry) return
 
-      const startDate = entry.startTs.split('T')[0]
-      const startTs = new Date(`${startDate}T${editForm.startTime}`).toISOString()
-      const endTs = editForm.endTime ? new Date(`${startDate}T${editForm.endTime}`).toISOString() : undefined
+      // Convert TimePicker format back to 24-hour format
+      const convertTimePickerTo24Hour = (timeString: string) => {
+        const [time, period] = timeString.split(' ')
+        const [hour, minute] = time.split(':')
+        let hour24 = parseInt(hour)
+        
+        if (period === 'PM' && hour24 !== 12) {
+          hour24 += 12
+        } else if (period === 'AM' && hour24 === 12) {
+          hour24 = 0
+        }
+        
+        return `${hour24.toString().padStart(2, '0')}:${minute}:00.000Z`
+      }
+      
+      // Create new timestamps with the edited times
+      const newStartTs = `${editForm.startDate}T${convertTimePickerTo24Hour(editForm.startTime)}`
+      const newEndTs = editForm.endTime ? `${editForm.startDate}T${convertTimePickerTo24Hour(editForm.endTime)}` : undefined
 
-      if (endTs && endTs <= startTs) {
+      if (newEndTs && newEndTs <= newStartTs) {
         alert('End time must be after start time')
         return
       }
 
       await entryService.update(entryId, {
         projectId: editForm.projectId || undefined,
-        startTs,
-        endTs,
+        startTs: newStartTs,
+        endTs: newEndTs,
         note: editForm.note || undefined
       })
 
@@ -278,141 +311,136 @@ export default function GroupedEntryList({ dateFilter, projectFilter }: GroupedE
                     <div key={entry.id} className="border-b border-gray-600 last:border-b-0">
                       {editingEntry === entry.id ? (
                         <div className="p-4 bg-gray-800">
-                          <div className="flex items-center gap-3">
-                            {/* Project Selector */}
-                            <select
-                              value={editForm.projectId}
-                              onChange={(e) => setEditForm(prev => ({ ...prev, projectId: e.target.value }))}
-                              className="px-2 py-1 text-xs border border-gray-600 rounded bg-gray-700 text-gray-100 min-w-[120px]"
-                            >
-                              <option value="">No Project</option>
-                              {projects?.map(project => (
-                                <option key={project.id} value={project.id}>
-                                  {project.name}
-                                </option>
-                              ))}
-                            </select>
+                          <div className="space-y-4">
+                            {/* Date and Time Row */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                              {/* Date */}
+                              <div>
+                                <label className="block text-sm font-medium text-gray-300 mb-2">
+                                  Date
+                                </label>
+                                <DatePicker
+                                  value={editForm.startDate}
+                                  onChange={(value) => setEditForm(prev => ({ ...prev, startDate: value }))}
+                                  placeholder="Select date"
+                                />
+                              </div>
 
-                            {/* Start Time */}
-                            <input
-                              type="time"
-                              value={editForm.startTime}
-                              onChange={(e) => setEditForm(prev => ({ ...prev, startTime: e.target.value }))}
-                              className="px-2 py-1 text-xs border border-gray-600 rounded bg-gray-700 text-gray-100 w-24"
-                            />
+                              {/* Start Time */}
+                              <div>
+                                <label className="block text-sm font-medium text-gray-300 mb-2">
+                                  Start Time
+                                </label>
+                                <TimePicker
+                                  value={editForm.startTime}
+                                  onChange={(value) => setEditForm(prev => ({ ...prev, startTime: value }))}
+                                  placeholder="Select start time"
+                                />
+                              </div>
 
-                            {/* End Time */}
-                            <input
-                              type="time"
-                              value={editForm.endTime}
-                              onChange={(e) => setEditForm(prev => ({ ...prev, endTime: e.target.value }))}
-                              className="px-2 py-1 text-xs border border-gray-600 rounded bg-gray-700 text-gray-100 w-24"
-                            />
+                              {/* End Time */}
+                              <div>
+                                <label className="block text-sm font-medium text-gray-300 mb-2">
+                                  End Time
+                                </label>
+                                <TimePicker
+                                  value={editForm.endTime}
+                                  onChange={(value) => setEditForm(prev => ({ ...prev, endTime: value }))}
+                                  placeholder="Select end time"
+                                />
+                              </div>
+                            </div>
 
-                            {/* Note */}
-                            <input
-                              type="text"
-                              value={editForm.note}
-                              onChange={(e) => setEditForm(prev => ({ ...prev, note: e.target.value }))}
-                              placeholder="Note..."
-                              className="px-2 py-1 text-xs border border-gray-600 rounded bg-gray-700 text-gray-100 flex-1 min-w-[120px]"
-                            />
+                            {/* Project and Note Row */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              {/* Project */}
+                              <div>
+                                <label className="block text-sm font-medium text-gray-300 mb-2">
+                                  Project
+                                </label>
+                                <ProjectSelector
+                                  selectedProjectId={editForm.projectId}
+                                  onProjectSelect={(projectId) => setEditForm(prev => ({ ...prev, projectId: projectId || '' }))}
+                                  placeholder="Select project"
+                                />
+                              </div>
+
+                              {/* Note */}
+                              <div>
+                                <label className="block text-sm font-medium text-gray-300 mb-2">
+                                  Note
+                                </label>
+                                <textarea
+                                  value={editForm.note}
+                                  onChange={(e) => setEditForm(prev => ({ ...prev, note: e.target.value }))}
+                                  placeholder="Optional note..."
+                                  rows={3}
+                                  className="w-full px-3 py-2 text-sm border border-gray-600 rounded-lg bg-gray-800 text-gray-100 placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition-colors resize-none"
+                                />
+                              </div>
+                            </div>
 
                             {/* Action Buttons */}
-                            <div className="flex gap-1">
-                              <button
-                                onClick={() => handleSaveEdit(entry.id)}
-                                className="px-2 py-1 text-xs bg-green-600 hover:bg-green-700 text-white rounded cursor-pointer transition-colors"
-                              >
-                                Save
-                              </button>
+                            <div className="flex gap-3 justify-end">
                               <button
                                 onClick={() => setEditingEntry(null)}
-                                className="px-2 py-1 text-xs bg-gray-600 hover:bg-gray-700 text-white rounded cursor-pointer transition-colors"
+                                className="px-4 py-2 text-sm bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
                               >
                                 Cancel
+                              </button>
+                              <button
+                                onClick={() => handleSaveEdit(entry.id)}
+                                className="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                              >
+                                Save
                               </button>
                             </div>
                           </div>
                         </div>
                       ) : (
-                        <div className="group">
-                          {/* Compact Summary Row */}
-                          <button
-                            onClick={() => toggleEntry(entry.id)}
-                            className="w-full flex items-center justify-between p-4 hover:bg-gray-600 transition-colors duration-200"
-                            role="button"
-                            aria-expanded={expandedEntries.has(entry.id)}
-                          >
-                            <div className="flex items-center gap-4 flex-1">
-                              {/* Project Badge */}
-                              <div
-                                className="px-3 py-1.5 rounded text-xs font-semibold text-white min-w-[90px] text-center uppercase tracking-wide"
-                                style={{ backgroundColor: getProjectColor(entry.projectId) }}
-                              >
-                                {getProjectName(entry.projectId)}
-                              </div>
-
-                              {/* Time Range */}
-                              <div className="min-w-[180px]">
-                                <div className="text-sm font-medium text-gray-100 mb-0.5">
+                        <div className="group flex items-center justify-between p-3 bg-gray-700/50 rounded-lg hover:bg-gray-600/50 transition-colors duration-200">
+                          <div className="flex items-center gap-3 flex-1 min-w-0">
+                            <div
+                              className="w-3 h-3 rounded-full flex-shrink-0"
+                              style={{ backgroundColor: getProjectColor(entry.projectId) }}
+                            />
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="text-sm font-medium text-gray-100 truncate">
+                                  {getProjectName(entry.projectId)}
+                                </span>
+                                <span className="text-xs text-gray-400">
                                   {formatTime(entry.startTs)} - {entry.endTs ? formatTime(entry.endTs) : 'Running'}
-                                </div>
-                                <div className="text-xs text-gray-400">
-                                  {entry.endTs ? formatDuration(calculateDuration(entry.startTs, entry.endTs)) : 'Running...'}
-                                </div>
+                                </span>
                               </div>
-
-                              {/* Note Preview */}
                               {entry.note && (
-                                <div className="flex-1 min-w-[120px]">
-                                  <div className="text-sm text-gray-300 truncate">
-                                    {entry.note}
-                                  </div>
+                                <div className="text-xs text-gray-300 truncate">
+                                  {entry.note}
                                 </div>
                               )}
                             </div>
-
-                            {/* Expand/Collapse Icon */}
-                            <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                              {expandedEntries.has(entry.id) ? (
-                                <ChevronDown size={16} className="text-gray-400" />
-                              ) : (
-                                <ChevronRight size={16} className="text-gray-400" />
-                              )}
+                            <div className="text-sm font-mono text-gray-200 flex-shrink-0">
+                              {entry.endTs ? formatDuration(calculateDuration(entry.startTs, entry.endTs)) : 'Running...'}
                             </div>
-                          </button>
-
-                          {/* Expanded Details */}
-                          {expandedEntries.has(entry.id) && (
-                            <div className="px-4 pt-4 pb-4 bg-gray-800 border-t border-gray-600">
-                              {/* Full Note */}
-                              {entry.note && (
-                                <div className="mb-4">
-                                  <p className="text-xs text-gray-400 mb-1">Note:</p>
-                                  <p className="text-sm text-gray-300">{entry.note}</p>
-                                </div>
-                              )}
-
-                              {/* Action Buttons */}
-                              <div className="flex gap-2">
-                                <button
-                                  onClick={() => handleEdit(entry)}
-                                  className="flex items-center gap-1 px-3 py-1.5 text-xs bg-transparent border border-gray-500 rounded-md text-gray-400 hover:bg-gray-600 hover:border-gray-400 hover:text-gray-100 transition-all duration-200"
-                                >
-                                  <Edit size={14} />
-                                  Edit
-                                </button>
-                                <button
-                                  onClick={() => handleDelete(entry.id)}
-                                  className="flex items-center gap-1 px-3 py-1.5 text-xs bg-transparent border border-gray-500 rounded-md text-gray-400 hover:bg-red-600 hover:border-red-500 hover:text-white transition-all duration-200"
-                                >
-                                  <Trash2 size={14} />
-                                  Delete
-                                </button>
-                              </div>
-                            </div>
-                          )}
+                          </div>
+                          
+                          {/* Action Buttons */}
+                          <div className="flex items-center gap-1 ml-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                            <button
+                              onClick={() => handleEdit(entry)}
+                              className="p-1.5 text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 rounded transition-colors duration-200"
+                              title="Edit entry"
+                            >
+                              <Edit size={14} />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(entry.id)}
+                              className="p-1.5 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors duration-200"
+                              title="Delete entry"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
                         </div>
                       )}
                     </div>
