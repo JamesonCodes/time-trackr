@@ -17,9 +17,11 @@ interface DaySummary {
 interface ReportTableProps {
   selectedWeek: Date
   onWeekChange: (date: Date) => void
+  selectedProject: string
+  onProjectChange: (projectId: string) => void
 }
 
-export default function ReportTable({ selectedWeek, onWeekChange }: ReportTableProps) {
+export default function ReportTable({ selectedWeek, onWeekChange, selectedProject, onProjectChange }: ReportTableProps) {
   const [weekData, setWeekData] = useState<DaySummary[]>([])
   const [totalWeekMinutes, setTotalWeekMinutes] = useState(0)
   const [expandedDays, setExpandedDays] = useState<Set<string>>(new Set())
@@ -35,9 +37,18 @@ export default function ReportTable({ selectedWeek, onWeekChange }: ReportTableP
     const weekEnd = endOfWeek(selectedWeek, { weekStartsOn: 0 })
     
     // Get entries for this week
-    const weekEntries = entries.filter(entry => 
+    let weekEntries = entries.filter(entry => 
       entry.endTs && isWithinInterval(new Date(entry.startTs), { start: weekStart, end: weekEnd })
     )
+
+    // Filter by selected project
+    if (selectedProject !== 'all') {
+      if (selectedProject === 'no-project') {
+        weekEntries = weekEntries.filter(entry => !entry.projectId)
+      } else {
+        weekEntries = weekEntries.filter(entry => entry.projectId === selectedProject)
+      }
+    }
 
     // Group by day
     const days = eachDayOfInterval({ start: weekStart, end: weekEnd })
@@ -88,7 +99,7 @@ export default function ReportTable({ selectedWeek, onWeekChange }: ReportTableP
     const totalMinutes = daySummaries.reduce((total, day) => total + day.totalMinutes, 0)
     setTotalWeekMinutes(totalMinutes)
 
-  }, [entries, projects, selectedWeek])
+  }, [entries, projects, selectedWeek, selectedProject])
 
   const toggleDay = (dateString: string) => {
     const newExpandedDays = new Set(expandedDays)
@@ -130,6 +141,26 @@ export default function ReportTable({ selectedWeek, onWeekChange }: ReportTableP
 
   return (
     <div>
+      {/* Project Filter */}
+      <div className="mb-6">
+        <div className="flex items-center gap-3">
+          <span className="text-sm font-medium text-gray-300">Filter:</span>
+          <select
+            value={selectedProject}
+            onChange={(e) => onProjectChange(e.target.value)}
+            className="px-3 py-2 pr-4 text-sm border border-gray-600 rounded-lg bg-gray-700 text-gray-100 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition-colors"
+          >
+            <option value="all">All Projects</option>
+            <option value="no-project">No Project</option>
+            {projects?.map((project) => (
+              <option key={project.id} value={project.id}>
+                {project.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
       {/* Weekly Summary Cards - Primary Section */}
       <div className="mb-8">
         <div className="flex flex-col sm:flex-row gap-4">
@@ -141,7 +172,9 @@ export default function ReportTable({ selectedWeek, onWeekChange }: ReportTableP
               </div>
               <div>
                 <p className="text-xs font-medium text-gray-400 mb-1 uppercase tracking-wide">
-                  Total Time
+                  {selectedProject === 'all' ? 'Total Time' : 
+                   selectedProject === 'no-project' ? 'No Project Time' :
+                   `Time for ${projects?.find(p => p.id === selectedProject)?.name || 'Project'}`}
                 </p>
                 <p className="text-2xl font-bold text-gray-100">
                   {formatDuration(totalWeekMinutes)}
@@ -162,7 +195,9 @@ export default function ReportTable({ selectedWeek, onWeekChange }: ReportTableP
               </div>
               <div>
                 <p className="text-xs font-medium text-gray-400 mb-1 uppercase tracking-wide">
-                  Daily Average
+                  {selectedProject === 'all' ? 'Daily Average' : 
+                   selectedProject === 'no-project' ? 'No Project Daily Avg' :
+                   `${projects?.find(p => p.id === selectedProject)?.name || 'Project'} Daily Avg`}
                 </p>
                 <p className="text-2xl font-bold text-gray-100">
                   {formatDuration(Math.round(totalWeekMinutes / 7))}

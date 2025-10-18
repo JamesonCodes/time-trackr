@@ -10,6 +10,7 @@ import CSVExportButton from '@/components/CSVExportButton'
 
 export default function ReportsPage() {
   const [selectedWeek, setSelectedWeek] = useState(new Date())
+  const [selectedProject, setSelectedProject] = useState<string>('all')
   const searchParams = useSearchParams()
 
   // Auto-scroll to Daily Breakdown section if scrollTo parameter is present
@@ -53,6 +54,7 @@ export default function ReportsPage() {
               />
             </div>
           </div>
+
           
           {/* Title Section */}
           <div className="flex items-center gap-3 mb-2">
@@ -70,6 +72,8 @@ export default function ReportsPage() {
         <ReportTable 
           selectedWeek={selectedWeek}
           onWeekChange={setSelectedWeek}
+          selectedProject={selectedProject}
+          onProjectChange={setSelectedProject}
         />
       </div>
     </div>
