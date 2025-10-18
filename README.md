@@ -1,6 +1,6 @@
 # TimeTrackr ⏱️
 
-A local-first time tracking app built with Next.js, TypeScript, Tailwind CSS, and Dexie.js — fast, private, and works entirely offline.
+A modern, local-first time tracking app built with Next.js, TypeScript, and a beautiful glass design system. Fast, private, and works entirely offline.
 
 ![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat-square&logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat-square&logo=typescript)
@@ -11,13 +11,25 @@ A local-first time tracking app built with Next.js, TypeScript, Tailwind CSS, an
 
 - **🕐 Real-time Timer**: Start/stop timer with live updates and project assignment
 - **📊 Project Management**: Create and manage projects with color coding
-- **📝 Time Entries**: Manual entry creation with validation and editing
+- **📝 Time Entries**: Manual entry creation with beautiful custom form components
 - **📈 Analytics**: Weekly reports with project breakdowns and time insights
+- **✏️ Inline Editing**: Edit entries directly from the dashboard and reports
 - **💾 Data Export**: Export all data as CSV for backup and analysis
 - **🔒 Privacy-First**: All data stored locally in your browser
 - **⚡ Offline-First**: Works completely offline, no internet required
-- **🎨 Dark Mode**: Beautiful dark theme with smooth transitions
+- **🎨 Glass Design**: Beautiful glass morphism UI with consistent design system
 - **📱 Responsive**: Optimized for desktop and mobile devices
+
+## 🎨 Design System
+
+TimeTrackr features a cohesive glass design system with:
+
+- **Custom TimePicker**: Beautiful dropdown time selection with glass styling
+- **Custom DatePicker**: Calendar picker with glass morphism design
+- **ProjectSelector**: Glass dropdown with project color indicators
+- **Consistent Components**: Unified design language across all interfaces
+- **Smooth Animations**: Elegant transitions and hover effects
+- **Professional UI**: Clean, modern interface optimized for productivity
 
 ## 🚀 Quick Start
 
@@ -55,7 +67,7 @@ A local-first time tracking app built with Next.js, TypeScript, Tailwind CSS, an
 
 - **Framework**: Next.js 15 with App Router
 - **Language**: TypeScript
-- **Styling**: Tailwind CSS
+- **Styling**: Tailwind CSS with custom glass design system
 - **Database**: Dexie.js (IndexedDB wrapper)
 - **Icons**: Lucide React
 - **Date Handling**: date-fns
@@ -73,10 +85,12 @@ time-trackr/
 │   └── settings/          # Settings and data management
 ├── components/            # React components
 │   ├── TimerBar.tsx       # Floating timer bar
-│   ├── EntryForm.tsx      # Manual entry form
-│   ├── EntryList.tsx      # Entry display and management
-│   ├── ProjectSelector.tsx # Project dropdown
-│   ├── ReportTable.tsx    # Weekly analytics table
+│   ├── EntryForm.tsx      # Manual entry form with custom components
+│   ├── GroupedEntryList.tsx # Entry display and management
+│   ├── TimePicker.tsx     # Custom time selection component
+│   ├── DatePicker.tsx     # Custom calendar picker
+│   ├── ProjectSelector.tsx # Glass project dropdown
+│   ├── ReportTable.tsx    # Weekly analytics with inline editing
 │   ├── CSVExportButton.tsx # Data export functionality
 │   └── ThemeProvider.tsx  # Dark mode context
 ├── lib/                   # Core utilities and database
@@ -102,21 +116,21 @@ time-trackr/
 
 ### Manual Time Entries
 1. Click **Add Manual Entry** on the dashboard
-2. Fill in the project, start time, end time, and note
-3. The duration is calculated automatically
-4. Save to add the entry to your log
+2. Use the beautiful custom form with TimePicker and DatePicker
+3. Select project, start time, end time, and add notes
+4. The duration is calculated automatically
 
 ### Viewing Reports
 1. Go to **Reports** to see weekly analytics
 2. Use the week selector to navigate between weeks
-3. View daily breakdowns and project summaries
-4. Export data as CSV for external analysis
+3. View daily breakdowns with project summaries
+4. Edit entries inline with the same beautiful components
+5. Export data as CSV for external analysis
 
-### Data Management
-1. Visit **Settings** to manage your data
-2. Export all data as CSV for backup
-3. View storage statistics
-4. Clear all data if needed (with confirmation)
+### Editing Entries
+1. Click the edit button on any entry in the dashboard or reports
+2. Use the consistent form components for seamless editing
+3. All changes are saved automatically to the local database
 
 ## 🔧 Development
 
@@ -135,6 +149,7 @@ npm run lint         # Run ESLint
 - **Data Layer**: Dexie.js with React hooks for reactive data
 - **Theme System**: Context-based dark mode with localStorage
 - **Export System**: Client-side CSV generation with Blob API
+- **Design System**: Consistent glass morphism components
 - **Responsive Design**: Mobile-first approach with Tailwind CSS
 
 ## 🚀 Deployment
@@ -174,4 +189,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**TimeTrackr** - Track your time, not your data. 🕐✨
+**TimeTrackr** - Track your time with style. 🕐✨
