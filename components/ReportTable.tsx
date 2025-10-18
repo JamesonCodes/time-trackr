@@ -486,7 +486,7 @@ export default function ReportTable({ selectedWeek, onWeekChange, selectedProjec
                                       </div>
                                     </div>
                                     <div className="text-sm font-mono text-gray-200 flex-shrink-0 ml-3">
-                                      {formatDuration(parseInt(duration))}
+                                      {formatDuration(parseInt(String(duration)))}
                                     </div>
                                   </div>
                                   
