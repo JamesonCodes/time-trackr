@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { ArrowLeft, BarChart3 } from 'lucide-react'
@@ -8,7 +8,7 @@ import ReportTable from '@/components/ReportTable'
 import WeekSelector from '@/components/WeekSelector'
 import CSVExportButton from '@/components/CSVExportButton'
 
-export default function ReportsPage() {
+function ReportsPageContent() {
   const [selectedWeek, setSelectedWeek] = useState(new Date())
   const [selectedProject, setSelectedProject] = useState<string>('all')
   const searchParams = useSearchParams()
@@ -116,5 +116,17 @@ export default function ReportsPage() {
         />
       </div>
     </div>
+  )
+}
+
+export default function ReportsPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="text-gray-400">Loading reports...</div>
+      </div>
+    }>
+      <ReportsPageContent />
+    </Suspense>
   )
 }
