@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useRef, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { ChevronUp, ChevronDown } from 'lucide-react'
 
 interface TimePickerProps {
@@ -20,6 +21,7 @@ export default function TimePicker({
 }: TimePickerProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [focusedColumn, setFocusedColumn] = useState<'hour' | 'minute' | 'period'>('hour')
+  const [dropdownPosition, setDropdownPosition] = useState<'bottom' | 'top'>('top')
   const containerRef = useRef<HTMLDivElement>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
 
@@ -70,6 +72,13 @@ export default function TimePicker({
     onChange(formattedTime)
   }
 
+  const handleSetTime = (hour: number, minute: number, period: string) => {
+    const newTime = { hour, minute, period }
+    setSelectedTime(newTime)
+    const formattedTime = formatTime(hour, minute, period)
+    onChange(formattedTime)
+  }
+
   const handleScroll = (type: 'hour' | 'minute' | 'period', direction: 'up' | 'down') => {
     const current = selectedTime[type]
     let newValue: number | string = current
@@ -92,7 +101,10 @@ export default function TimePicker({
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+      const target = event.target as Node
+      const isDropdown = (target as Element)?.closest('[data-time-picker]')
+      
+      if (containerRef.current && !containerRef.current.contains(target) && !isDropdown) {
         setIsOpen(false)
       }
     }
@@ -109,27 +121,41 @@ export default function TimePicker({
       const containerRect = containerRef.current!.getBoundingClientRect()
       const dropdown = dropdownRef.current!
       
-      // Position dropdown below the input
-      dropdown.style.top = `${containerRect.bottom + 4}px`
-      dropdown.style.left = `${containerRect.left}px`
-      
-      // Check if dropdown would go off-screen and adjust
-      const dropdownRect = dropdown.getBoundingClientRect()
+      // Check if dropdown would go off-screen and adjust position
+      const dropdownHeight = 200 // Approximate dropdown height
       const viewportHeight = window.innerHeight
-      const viewportWidth = window.innerWidth
+      const spaceBelow = viewportHeight - containerRect.bottom
+      const spaceAbove = containerRect.top
       
-      // If dropdown goes below viewport, position it above the input
-      if (dropdownRect.bottom > viewportHeight - 10) {
-        dropdown.style.top = `${containerRect.top - dropdownRect.height - 4}px`
+      // Add more buffer space to prevent overlap
+      const bufferSpace = 20
+      
+      // Prefer top position (like date picker), fall back to bottom if not enough space above
+      if (spaceAbove >= dropdownHeight + bufferSpace) {
+        setDropdownPosition('top')
+        dropdown.style.top = 'auto'
+        dropdown.style.bottom = `${window.innerHeight - containerRect.top + bufferSpace}px`
+      } else {
+        setDropdownPosition('bottom')
+        dropdown.style.bottom = 'auto'
+        dropdown.style.top = `${containerRect.bottom + bufferSpace}px`
       }
       
-      // If dropdown goes off right edge, align it to the right edge of input
-      if (dropdownRect.right > viewportWidth - 10) {
-        dropdown.style.left = `${containerRect.right - dropdownRect.width}px`
-      }
+      // Ensure dropdown doesn't go off the right edge and center when possible
+      const dropdownWidth = 288 // w-72 = 288px
+      const spaceRight = window.innerWidth - containerRect.left
+      const spaceLeft = containerRect.left
       
-      // If dropdown goes off left edge, align it to the left edge of input
-      if (dropdownRect.left < 10) {
+      // Try to center the dropdown relative to the input field
+      const inputCenter = containerRect.left + (containerRect.width / 2)
+      const idealLeft = inputCenter - (dropdownWidth / 2)
+      
+      // Check if centered position would fit
+      if (idealLeft >= 10 && idealLeft + dropdownWidth <= window.innerWidth - 10) {
+        dropdown.style.left = `${idealLeft}px`
+      } else if (spaceRight < dropdownWidth) {
+        dropdown.style.left = `${Math.max(10, containerRect.right - dropdownWidth)}px`
+      } else {
         dropdown.style.left = `${containerRect.left}px`
       }
     }
@@ -174,26 +200,31 @@ export default function TimePicker({
       </div>
 
       {/* Dropdown */}
-      {isOpen && !disabled && (
+      {isOpen && !disabled && createPortal(
         <div
           ref={dropdownRef}
-          className="fixed z-[60] w-80 bg-gray-900/20 backdrop-blur-md border border-white/10 rounded-xl shadow-2xl"
+          className="fixed z-[9999] w-72 glass-card rounded-xl shadow-2xl"
+          data-time-picker
+          onClick={(e) => e.stopPropagation()}
         >
           <div className="flex">
             {/* Hours Column */}
-            <div className="flex-1 p-3 bg-white/5 rounded-l-xl">
+            <div className="flex-1 p-3 glass-subtle rounded-l-xl">
               <div className="text-xs text-gray-300 text-center mb-3 font-medium tracking-wider">HOUR</div>
               <div className="max-h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
                 {hours.map((hour) => (
                   <div
                     key={hour}
-                    onClick={() => handleTimeChange('hour', hour)}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleTimeChange('hour', hour)
+                    }}
                     className={`
                       px-3 py-2 text-center text-sm rounded-lg cursor-pointer transition-all duration-200
-                      ${selectedTime.hour === hour
-                        ? 'bg-blue-500/80 text-white font-medium shadow-lg shadow-blue-500/25'
-                        : 'text-gray-200 hover:bg-white/10 hover:text-white'
-                      }
+                        ${selectedTime.hour === hour
+                          ? 'glass-tint-blue text-white font-medium shadow-lg shadow-blue-500/25'
+                          : 'text-gray-200 hover:glass-subtle hover:text-white'
+                        }
                     `}
                   >
                     {hour.toString().padStart(2, '0')}
@@ -203,19 +234,22 @@ export default function TimePicker({
             </div>
 
             {/* Minutes Column */}
-            <div className="flex-1 p-3 bg-white/5 border-l border-white/10">
+            <div className="flex-1 p-3 glass-subtle border-l border-white/10">
               <div className="text-xs text-gray-300 text-center mb-3 font-medium tracking-wider">MIN</div>
               <div className="max-h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
                 {minutes.map((minute) => (
                   <div
                     key={minute}
-                    onClick={() => handleTimeChange('minute', minute)}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleTimeChange('minute', minute)
+                    }}
                     className={`
                       px-3 py-2 text-center text-sm rounded-lg cursor-pointer transition-all duration-200
-                      ${selectedTime.minute === minute
-                        ? 'bg-blue-500/80 text-white font-medium shadow-lg shadow-blue-500/25'
-                        : 'text-gray-200 hover:bg-white/10 hover:text-white'
-                      }
+                        ${selectedTime.minute === minute
+                          ? 'glass-tint-blue text-white font-medium shadow-lg shadow-blue-500/25'
+                          : 'text-gray-200 hover:glass-subtle hover:text-white'
+                        }
                     `}
                   >
                     {minute.toString().padStart(2, '0')}
@@ -225,19 +259,22 @@ export default function TimePicker({
             </div>
 
             {/* Period Column */}
-            <div className="flex-1 p-3 bg-white/5 border-l border-white/10 rounded-r-xl">
+            <div className="flex-1 p-3 glass-subtle border-l border-white/10 rounded-r-xl">
               <div className="text-xs text-gray-300 text-center mb-3 font-medium tracking-wider">PERIOD</div>
               <div className="max-h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
                 {periods.map((period) => (
                   <div
                     key={period}
-                    onClick={() => handleTimeChange('period', period)}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      handleTimeChange('period', period)
+                    }}
                     className={`
                       px-3 py-2 text-center text-sm rounded-lg cursor-pointer transition-all duration-200
-                      ${selectedTime.period === period
-                        ? 'bg-blue-500/80 text-white font-medium shadow-lg shadow-blue-500/25'
-                        : 'text-gray-200 hover:bg-white/10 hover:text-white'
-                      }
+                        ${selectedTime.period === period
+                          ? 'glass-tint-blue text-white font-medium shadow-lg shadow-blue-500/25'
+                          : 'text-gray-200 hover:glass-subtle hover:text-white'
+                        }
                     `}
                   >
                     {period}
@@ -248,42 +285,63 @@ export default function TimePicker({
           </div>
 
           {/* Quick Actions */}
-          <div className="border-t border-white/10 p-3 bg-white/5 rounded-b-xl">
+          <div className="border-t border-white/10 p-3 glass-subtle rounded-b-xl">
             <div className="flex gap-2">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    const now = new Date()
+                    const hour = now.getHours()
+                    const minute = now.getMinutes()
+                    const period = hour >= 12 ? 'PM' : 'AM'
+                    const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour
+                    handleSetTime(displayHour, minute, period)
+                  }}
+                  className="flex-1 px-3 py-2 text-xs text-gray-300 hover:text-white hover:glass-subtle rounded-lg transition-all duration-200 font-medium"
+                >
+                  Now
+                </button>
               <button
-                onClick={() => {
-                  const now = new Date()
-                  const hour = now.getHours()
-                  const minute = now.getMinutes()
-                  const period = hour >= 12 ? 'PM' : 'AM'
-                  const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour
-                  handleTimeChange('hour', displayHour)
-                  handleTimeChange('minute', minute)
-                  handleTimeChange('period', period)
+                onClick={(e) => {
+                  e.stopPropagation()
+                  // Add 1 hour to the currently selected time
+                  const currentHour = selectedTime.hour
+                  const currentMinute = selectedTime.minute
+                  const currentPeriod = selectedTime.period
+                  
+                  // Convert to 24-hour format for calculation
+                  let hour24 = currentHour
+                  if (currentPeriod === 'PM' && currentHour !== 12) {
+                    hour24 += 12
+                  } else if (currentPeriod === 'AM' && currentHour === 12) {
+                    hour24 = 0
+                  }
+                  
+                  // Add 1 hour
+                  hour24 = (hour24 + 1) % 24
+                  
+                  // Convert back to 12-hour format
+                  let newHour = hour24
+                  let newPeriod = 'AM'
+                  if (hour24 === 0) {
+                    newHour = 12
+                  } else if (hour24 > 12) {
+                    newHour = hour24 - 12
+                    newPeriod = 'PM'
+                  } else if (hour24 === 12) {
+                    newPeriod = 'PM'
+                  }
+                  
+                  handleSetTime(newHour, currentMinute, newPeriod)
                 }}
-                className="flex-1 px-3 py-2 text-xs text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-200 font-medium"
-              >
-                Now
-              </button>
-              <button
-                onClick={() => {
-                  const oneHourLater = new Date()
-                  oneHourLater.setHours(oneHourLater.getHours() + 1)
-                  const hour = oneHourLater.getHours()
-                  const minute = oneHourLater.getMinutes()
-                  const period = hour >= 12 ? 'PM' : 'AM'
-                  const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour
-                  handleTimeChange('hour', displayHour)
-                  handleTimeChange('minute', minute)
-                  handleTimeChange('period', period)
-                }}
-                className="flex-1 px-3 py-2 text-xs text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-200 font-medium"
+                className="flex-1 px-3 py-2 text-xs text-gray-300 hover:text-white hover:glass-subtle rounded-lg transition-all duration-200 font-medium"
               >
                 +1 Hour
               </button>
             </div>
           </div>
         </div>
+        , document.body
       )}
     </div>
   )
