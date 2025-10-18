@@ -247,10 +247,10 @@ export default function GroupedEntryList({ dateFilter, projectFilter }: GroupedE
       <div className="flex items-center justify-between mb-6 mt-2">
         <div className="flex items-center gap-2">
           <span className="text-sm text-gray-400">Group by:</span>
-          <div className="flex bg-gray-700 rounded-lg p-1">
+          <div className="flex bg-gray-700 rounded-lg p-0.5">
             <button
               onClick={() => setGroupingType('project')}
-              className={`px-3 py-1 text-xs font-medium rounded transition-colors duration-200 ${
+              className={`px-2 py-1 text-xs font-medium rounded transition-colors duration-200 ${
                 groupingType === 'project'
                   ? 'bg-blue-600 text-white'
                   : 'text-gray-300 hover:text-white'
@@ -260,7 +260,7 @@ export default function GroupedEntryList({ dateFilter, projectFilter }: GroupedE
             </button>
             <button
               onClick={() => setGroupingType('time')}
-              className={`px-3 py-1 text-xs font-medium rounded transition-colors duration-200 ${
+              className={`px-2 py-1 text-xs font-medium rounded transition-colors duration-200 ${
                 groupingType === 'time'
                   ? 'bg-blue-600 text-white'
                   : 'text-gray-300 hover:text-white'
