@@ -28,6 +28,12 @@ export default function ReportTable({ selectedWeek, onWeekChange, selectedProjec
   const [expandedDays, setExpandedDays] = useState<Set<string>>(new Set())
   const [editingEntry, setEditingEntry] = useState<string | null>(null)
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
+  const [editFormData, setEditFormData] = useState({
+    startTime: '',
+    endTime: '',
+    note: '',
+    projectId: ''
+  })
 
   const entries = useEntries()
   const projects = useProjects()
@@ -134,7 +140,44 @@ export default function ReportTable({ selectedWeek, onWeekChange, selectedProjec
   }
 
   const handleEditEntry = (entryId: string) => {
-    setEditingEntry(entryId)
+    const entry = entries?.find(e => e.id === entryId)
+    if (entry) {
+      setEditFormData({
+        startTime: format(new Date(entry.startTs), 'HH:mm'),
+        endTime: entry.endTs ? format(new Date(entry.endTs), 'HH:mm') : '',
+        note: entry.note || '',
+        projectId: entry.projectId || ''
+      })
+      setEditingEntry(entryId)
+    }
+  }
+
+  const handleSaveEdit = async () => {
+    if (!editingEntry) return
+    
+    try {
+      const entry = entries?.find(e => e.id === editingEntry)
+      if (!entry) return
+
+      // Get the original date from the entry
+      const originalDate = new Date(entry.startTs).toISOString().split('T')[0]
+      
+      // Create new timestamps with the edited times
+      const newStartTs = `${originalDate}T${editFormData.startTime}:00.000Z`
+      const newEndTs = editFormData.endTime ? `${originalDate}T${editFormData.endTime}:00.000Z` : undefined
+
+      // Update the entry
+      await entryService.update(editingEntry, {
+        startTs: newStartTs,
+        endTs: newEndTs,
+        note: editFormData.note || undefined,
+        projectId: editFormData.projectId || undefined
+      })
+
+      setEditingEntry(null)
+    } catch (error) {
+      console.error('Failed to update entry:', error)
+    }
   }
 
   const handleDeleteEntry = async (entryId: string) => {
@@ -351,48 +394,101 @@ export default function ReportTable({ selectedWeek, onWeekChange, selectedProjec
                             key={entry.id}
                             className="group flex items-center justify-between p-3 bg-gray-700/50 rounded-lg hover:bg-gray-600/50 transition-colors duration-200"
                           >
-                            <div className="flex items-center gap-3 flex-1 min-w-0">
-                              <div
-                                className="w-3 h-3 rounded-full flex-shrink-0"
-                                style={{ backgroundColor: getProjectColor(projectName) }}
-                              />
-                              <div className="min-w-0 flex-1">
-                                <div className="flex items-center gap-2 mb-1">
-                                  <span className="text-sm font-medium text-gray-100 truncate">
-                                    {projectName}
-                                  </span>
-                                  <span className="text-xs text-gray-400">
-                                    {startTime} - {endTime}
-                                  </span>
-                                </div>
-                                {entry.note && (
-                                  <div className="text-xs text-gray-300 truncate">
-                                    {entry.note}
+                            {editingEntry === entry.id ? (
+                              /* Edit Form */
+                              <div className="flex-1 space-y-3">
+                                <div className="grid grid-cols-2 gap-2">
+                                  <div>
+                                    <label className="text-xs text-gray-400 mb-1 block">Start Time</label>
+                                    <input
+                                      type="time"
+                                      value={editFormData.startTime}
+                                      onChange={(e) => setEditFormData(prev => ({ ...prev, startTime: e.target.value }))}
+                                      className="w-full px-2 py-1 text-xs border border-gray-600 rounded bg-gray-800 text-gray-100 focus:border-blue-500 focus:outline-none"
+                                    />
                                   </div>
-                                )}
+                                  <div>
+                                    <label className="text-xs text-gray-400 mb-1 block">End Time</label>
+                                    <input
+                                      type="time"
+                                      value={editFormData.endTime}
+                                      onChange={(e) => setEditFormData(prev => ({ ...prev, endTime: e.target.value }))}
+                                      className="w-full px-2 py-1 text-xs border border-gray-600 rounded bg-gray-800 text-gray-100 focus:border-blue-500 focus:outline-none"
+                                    />
+                                  </div>
+                                </div>
+                                <div>
+                                  <label className="text-xs text-gray-400 mb-1 block">Note</label>
+                                  <input
+                                    type="text"
+                                    value={editFormData.note}
+                                    onChange={(e) => setEditFormData(prev => ({ ...prev, note: e.target.value }))}
+                                    placeholder="Optional note..."
+                                    className="w-full px-2 py-1 text-xs border border-gray-600 rounded bg-gray-800 text-gray-100 focus:border-blue-500 focus:outline-none"
+                                  />
+                                </div>
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={handleSaveEdit}
+                                    className="px-3 py-1 text-xs bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors"
+                                  >
+                                    Save
+                                  </button>
+                                  <button
+                                    onClick={handleCancelEdit}
+                                    className="px-3 py-1 text-xs bg-gray-600 hover:bg-gray-700 text-white rounded transition-colors"
+                                  >
+                                    Cancel
+                                  </button>
+                                </div>
                               </div>
-                              <div className="text-sm font-mono text-gray-200 flex-shrink-0">
-                                {formatDuration(parseInt(duration))}
-                              </div>
-                            </div>
-                            
-                            {/* Action Buttons */}
-                            <div className="flex items-center gap-1 ml-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                              <button
-                                onClick={() => handleEditEntry(entry.id)}
-                                className="p-1.5 text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 rounded transition-colors duration-200"
-                                title="Edit entry"
-                              >
-                                <Edit size={14} />
-                              </button>
-                              <button
-                                onClick={() => setDeleteConfirm(entry.id)}
-                                className="p-1.5 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors duration-200"
-                                title="Delete entry"
-                              >
-                                <Trash2 size={14} />
-                              </button>
-                            </div>
+                            ) : (
+                              /* Display Mode */
+                              <>
+                                <div className="flex items-center gap-3 flex-1 min-w-0">
+                                  <div
+                                    className="w-3 h-3 rounded-full flex-shrink-0"
+                                    style={{ backgroundColor: getProjectColor(projectName) }}
+                                  />
+                                  <div className="min-w-0 flex-1">
+                                    <div className="flex items-center gap-2 mb-1">
+                                      <span className="text-sm font-medium text-gray-100 truncate">
+                                        {projectName}
+                                      </span>
+                                      <span className="text-xs text-gray-400">
+                                        {startTime} - {endTime}
+                                      </span>
+                                    </div>
+                                    {entry.note && (
+                                      <div className="text-xs text-gray-300 truncate">
+                                        {entry.note}
+                                      </div>
+                                    )}
+                                  </div>
+                                  <div className="text-sm font-mono text-gray-200 flex-shrink-0">
+                                    {formatDuration(parseInt(duration))}
+                                  </div>
+                                </div>
+                                
+                                {/* Action Buttons */}
+                                <div className="flex items-center gap-1 ml-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                  <button
+                                    onClick={() => handleEditEntry(entry.id)}
+                                    className="p-1.5 text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 rounded transition-colors duration-200"
+                                    title="Edit entry"
+                                  >
+                                    <Edit size={14} />
+                                  </button>
+                                  <button
+                                    onClick={() => setDeleteConfirm(entry.id)}
+                                    className="p-1.5 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors duration-200"
+                                    title="Delete entry"
+                                  >
+                                    <Trash2 size={14} />
+                                  </button>
+                                </div>
+                              </>
+                            )}
                           </div>
                         )
                       })}
