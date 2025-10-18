@@ -31,13 +31,16 @@ export default function Dashboard() {
     return project?.name || 'Unknown Project'
   }
 
-  const handleStatCardClick = (type: 'time' | 'projects') => {
+  const handleStatCardClick = (type: 'time' | 'projects' | 'entries') => {
     switch (type) {
       case 'time':
         router.push('/reports?filter=today')
         break
       case 'projects':
         router.push('/projects')
+        break
+      case 'entries':
+        router.push('/reports?scrollTo=daily-breakdown')
         break
     }
   }
