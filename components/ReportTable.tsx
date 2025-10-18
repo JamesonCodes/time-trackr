@@ -82,7 +82,7 @@ export default function ReportTable({ selectedWeek, onWeekChange }: ReportTableP
       }
     })
 
-    setWeekData(daySummaries)
+    setWeekData(daySummaries.reverse())
 
     // Calculate totals
     const totalMinutes = daySummaries.reduce((total, day) => total + day.totalMinutes, 0)
