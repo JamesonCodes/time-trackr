@@ -74,10 +74,10 @@ export default function SettingsPage() {
           <div className="flex items-center gap-4 mb-4">
             <Link
               href="/"
-              className="flex items-center gap-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-gray-100 rounded-lg text-sm font-medium border border-gray-600 transition-colors duration-200"
+              className="inline-flex items-center text-gray-400 hover:text-gray-100 transition-colors duration-200"
             >
-              <ArrowLeft size={16} />
-              Back to Dashboard
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Home
             </Link>
           </div>
           
