@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Settings, Trash2, Database, Download, HardDrive } from 'lucide-react'
+import { ArrowLeft, Settings, Trash2, Database, Download, HardDrive, Shield } from 'lucide-react'
 import { useEntries, useProjects, db } from '@/lib/db'
 import CSVExportButton from '@/components/CSVExportButton'
 
@@ -339,27 +339,22 @@ export default function SettingsPage() {
         </div>
 
         {/* App Info Footer */}
-        <div style={{
-          marginTop: '32px',
-          textAlign: 'left'
-        }}>
-          <div style={{
-            fontSize: '11px',
-            fontWeight: '500',
-            color: '#6b7280',
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em',
-            marginBottom: '8px'
-          }}>
+        <div className="mt-8 text-left">
+          <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">
             App Info
           </div>
-          <div style={{
-            fontSize: '13px',
-            color: '#9ca3af',
-            lineHeight: '1.4'
-          }}>
-            Version 1.0.0 • Local-first build • Last updated Oct 2025
+          <div className="text-sm text-gray-400 dark:text-gray-500 leading-relaxed mb-3">
+            Version 1.0.0 • Local-first build • Last updated Jan 2025
           </div>
+          
+          {/* Privacy Policy Link */}
+          <Link 
+            href="/privacy" 
+            className="inline-flex items-center text-sm text-blue-400 hover:text-blue-300 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-200"
+          >
+            <Shield className="w-4 h-4 mr-2" />
+            Privacy Policy
+          </Link>
         </div>
 
       </div>
