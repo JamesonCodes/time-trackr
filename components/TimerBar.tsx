@@ -128,8 +128,8 @@ export default function TimerBar() {
                         type="text"
                         value={note}
                         onChange={(e) => setNote(e.target.value)}
-                        placeholder="Note..."
-                        className="w-full px-3 py-2 text-sm glass-subtle border border-gray-500 rounded-md text-white placeholder-gray-400 focus:border-gray-400 focus:glass-card focus:outline-none"
+                        placeholder="Optional note..."
+                        className="w-full px-3 py-2 text-sm border border-gray-600 rounded-lg bg-gray-700 text-gray-100 placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition-colors"
                       />
                     </div>
                     <button
@@ -237,8 +237,8 @@ export default function TimerBar() {
                       type="text"
                       value={note}
                       onChange={(e) => setNote(e.target.value)}
-                      placeholder="Note..."
-                      className="px-3 py-2 text-sm glass-subtle border border-gray-500 rounded-md text-white placeholder-gray-400 w-40 focus:border-gray-400 focus:glass-card focus:outline-none transition-all duration-200"
+                      placeholder="Optional note..."
+                      className="px-3 py-2 text-sm border border-gray-600 rounded-lg bg-gray-700 text-gray-100 placeholder-gray-400 w-40 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition-colors"
                     />
                   </div>
 

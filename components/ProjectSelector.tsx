@@ -54,9 +54,9 @@ export default function ProjectSelector({
           justifyContent: 'space-between',
           padding: '8px 12px',
           border: '1px solid #4b5563',
-          borderRadius: '6px',
-          backgroundColor: '#1f2937',
-          color: '#f9fafb',
+          borderRadius: '8px',
+          backgroundColor: '#374151',
+          color: '#f3f4f6',
           minHeight: '40px',
           transition: 'all 0.2s ease'
         }}
