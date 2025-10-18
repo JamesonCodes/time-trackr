@@ -35,8 +35,9 @@ export default function EntryModal({ isOpen, onClose, onEntryCreated }: EntryMod
       const target = e.target as Node
       const isTimePicker = (target as Element)?.closest('[data-time-picker]')
       const isDatePicker = (target as Element)?.closest('[data-date-picker]')
+      const isProjectSelector = (target as Element)?.closest('[data-project-selector]')
       
-      if (modalRef.current && !modalRef.current.contains(target) && !isTimePicker && !isDatePicker) {
+      if (modalRef.current && !modalRef.current.contains(target) && !isTimePicker && !isDatePicker && !isProjectSelector) {
         onClose()
       }
     }
