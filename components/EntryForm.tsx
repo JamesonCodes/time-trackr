@@ -192,7 +192,7 @@ export default function EntryForm({ onEntryCreated, onCancel, initialDate }: Ent
   return (
     <form onSubmit={handleSubmit} onKeyDown={handleKeyDown} className="space-y-6">
       {/* Project and Note Row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4">
         {/* Project Selector */}
         <div ref={projectRef}>
           <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -216,7 +216,7 @@ export default function EntryForm({ onEntryCreated, onCancel, initialDate }: Ent
             value={formData.note}
             onChange={(e) => setFormData(prev => ({ ...prev, note: e.target.value }))}
             placeholder="Optional note..."
-            className="w-full px-3 py-2 text-sm border border-gray-600 rounded-lg bg-gray-700 text-gray-100 placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition-colors"
+            className="w-full px-3 py-3 text-sm border border-gray-600 rounded-lg bg-gray-700 text-gray-100 placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition-colors min-h-[44px]"
             tabIndex={2}
           />
         </div>
@@ -230,7 +230,7 @@ export default function EntryForm({ onEntryCreated, onCancel, initialDate }: Ent
       </div>
 
       {/* Date and Time Group */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Date */}
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -262,7 +262,7 @@ export default function EntryForm({ onEntryCreated, onCancel, initialDate }: Ent
         </div>
 
         {/* End Time */}
-        <div>
+        <div className="sm:col-span-2 lg:col-span-1">
           <label className="block text-sm font-medium text-gray-300 mb-2">
             End Time
           </label>
@@ -297,12 +297,12 @@ export default function EntryForm({ onEntryCreated, onCancel, initialDate }: Ent
 
       {/* Action Buttons */}
       <div className="pt-6 border-t border-gray-700">
-        <div className="flex justify-end gap-3">
+        <div className="flex flex-col sm:flex-row justify-end gap-3">
           {onCancel && (
             <button
               type="button"
               onClick={onCancel}
-              className="px-4 py-2 text-sm text-gray-400 bg-transparent border border-gray-600 rounded-lg hover:text-gray-200 hover:border-gray-500 transition-colors"
+              className="px-4 py-3 text-sm text-gray-400 bg-transparent border border-gray-600 rounded-lg hover:text-gray-200 hover:border-gray-500 transition-colors min-h-[44px] touch-manipulation"
               tabIndex={7}
             >
               Cancel
@@ -311,7 +311,7 @@ export default function EntryForm({ onEntryCreated, onCancel, initialDate }: Ent
           <button
             type="submit"
             disabled={isSubmitting}
-            className="flex items-center gap-2 px-4 py-2 text-sm text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors"
+            className="flex items-center justify-center gap-2 px-4 py-3 text-sm text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors min-h-[44px] touch-manipulation"
             tabIndex={6}
           >
             <Plus size={16} />

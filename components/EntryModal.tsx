@@ -88,16 +88,16 @@ export default function EntryModal({ isOpen, onClose, onEntryCreated }: EntryMod
       {/* Modal */}
       <div
         ref={modalRef}
-        className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto glass-strong rounded-xl shadow-2xl glass-enter"
+        className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto glass-strong rounded-xl shadow-2xl glass-enter md:max-h-[90vh] h-full md:h-auto"
         tabIndex={-1}
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-600/50">
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-600/50 sticky top-0 bg-gray-800/95 backdrop-blur-sm z-10">
           <div>
-            <h2 id="modal-title" className="text-xl font-semibold text-gray-100">
+            <h2 id="modal-title" className="text-lg sm:text-xl font-semibold text-gray-100">
               New Time Entry
             </h2>
             <p className="text-sm text-gray-400 mt-1">
@@ -106,7 +106,7 @@ export default function EntryModal({ isOpen, onClose, onEntryCreated }: EntryMod
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-gray-400 hover:text-gray-100 hover:bg-gray-700 rounded-lg transition-colors duration-200"
+            className="p-2 text-gray-400 hover:text-gray-100 hover:bg-gray-700 rounded-lg transition-colors duration-200 min-h-[44px] min-w-[44px] touch-manipulation"
             aria-label="Close modal"
           >
             <X size={20} />
@@ -114,7 +114,7 @@ export default function EntryModal({ isOpen, onClose, onEntryCreated }: EntryMod
         </div>
 
         {/* Content */}
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           <EntryForm
             onEntryCreated={handleEntryCreated}
             onCancel={onClose}

@@ -56,7 +56,7 @@ export default function TimerBar() {
         {/* Mobile FAB */}
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className={`fixed bottom-4 right-4 z-50 w-16 h-16 rounded-full glass-strong transition-all duration-300 ${
+          className={`fixed bottom-20 right-6 z-50 w-16 h-16 rounded-full glass-strong transition-all duration-300 touch-manipulation ${
             timer.isRunning 
               ? 'glass-tint-green shadow-green-500/30' 
               : 'glass-tint-blue shadow-blue-500/30'
@@ -75,12 +75,12 @@ export default function TimerBar() {
         {/* Mobile Expanded Panel */}
         {isExpanded && (
           <div className="fixed inset-0 z-40 bg-black/60 backdrop-blur-md" onClick={() => setIsExpanded(false)}>
-            <div className="fixed bottom-0 left-0 right-0 glass-strong border-t border-gray-600 rounded-t-xl p-6 glass-enter" onClick={(e) => e.stopPropagation()}>
+            <div className="fixed bottom-0 left-0 right-0 glass-strong border-t border-gray-600 rounded-t-xl p-4 sm:p-6 glass-enter max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-100">Timer</h3>
                 <button
                   onClick={() => setIsExpanded(false)}
-                  className="p-2 text-gray-400 hover:text-gray-100"
+                  className="p-2 text-gray-400 hover:text-gray-100 min-h-[44px] min-w-[44px] touch-manipulation"
                 >
                   <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
@@ -90,13 +90,13 @@ export default function TimerBar() {
 
               {/* Timer Display */}
               <div className="text-center mb-6">
-                <div className={`text-4xl font-mono font-bold mb-2 ${
+                <div className={`text-3xl sm:text-4xl font-mono font-bold mb-2 ${
                   timer.isRunning ? 'text-green-100' : 'text-gray-300'
                 }`}>
                   {timer.isRunning ? timer.getFormattedElapsedTime() : '00:00:00'}
                 </div>
                 {timer.isRunning && timer.currentEntry && (
-                  <div className="flex items-center justify-center gap-2">
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-2">
                     {selectedProject && (
                       <div 
                         className="px-2 py-1 rounded text-xs font-semibold text-white uppercase tracking-wide"
@@ -106,7 +106,7 @@ export default function TimerBar() {
                       </div>
                     )}
                     {timer.currentEntry.note && (
-                      <div className="text-sm text-gray-300 italic">
+                      <div className="text-sm text-gray-300 italic text-center">
                         {timer.currentEntry.note}
                       </div>
                     )}
@@ -118,7 +118,7 @@ export default function TimerBar() {
               <div className="space-y-4">
                 {!timer.isRunning && (
                   <>
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                       <ProjectSelector
                         selectedProjectId={selectedProjectId}
                         onProjectSelect={setSelectedProjectId}
@@ -129,12 +129,12 @@ export default function TimerBar() {
                         value={note}
                         onChange={(e) => setNote(e.target.value)}
                         placeholder="Optional note..."
-                        className="w-full px-3 py-2 text-sm border border-gray-600 rounded-lg bg-gray-700 text-gray-100 placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition-colors"
+                        className="w-full px-3 py-3 text-sm border border-gray-600 rounded-lg bg-gray-700 text-gray-100 placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition-colors min-h-[44px]"
                       />
                     </div>
                     <button
                       onClick={handleStartTimer}
-                      className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-colors"
+                      className="w-full flex items-center justify-center gap-2 px-5 py-4 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-colors min-h-[44px] touch-manipulation"
                     >
                       <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M8 5v14l11-7z"/>
@@ -147,7 +147,7 @@ export default function TimerBar() {
                 {timer.isRunning && (
                   <button
                     onClick={handleStopTimer}
-                    className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-colors"
+                    className="w-full flex items-center justify-center gap-2 px-5 py-4 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-colors min-h-[44px] touch-manipulation"
                   >
                     <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M6 6h12v12H6z"/>

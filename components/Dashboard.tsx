@@ -49,64 +49,110 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gray-900">
       <div className="container mx-auto px-4 py-8">
             {/* Header */}
-            <div className="flex justify-between items-start mb-8">
-              <div>
-                <h1 className="text-3xl font-bold text-gray-100 mb-2">
-                  TimeTrackr
-                </h1>
-                <p className="text-gray-400">
-                  Track your time locally and privately
-                </p>
-              </div>
-              
-              <div className="flex items-center gap-4">
-                {/* Secondary Navigation - Lightweight */}
-                <div className="flex gap-1">
+            <div className="mb-8">
+              {/* Mobile Header - Stacked Layout */}
+              <div className="block md:hidden">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h1 className="text-2xl font-bold text-gray-100 mb-1">
+                      TimeTrackr
+                    </h1>
+                    <p className="text-sm text-gray-400">
+                      Track your time locally and privately
+                    </p>
+                  </div>
+                  
+                  {/* Mobile Menu Button */}
+                  <button className="p-2 text-gray-400 hover:text-gray-100 hover:bg-gray-700 rounded-lg transition-colors">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M3 12h18M3 6h18M3 18h18"/>
+                    </svg>
+                  </button>
+                </div>
+                
+                {/* Mobile Navigation */}
+                <div className="flex gap-1 mb-4">
                   <a
                     href="/reports"
-                    className="px-3 py-1.5 text-gray-400 hover:text-gray-100 hover:bg-gray-700 text-sm font-normal rounded-md transition-all duration-200"
+                    className="flex-1 px-3 py-2 text-gray-400 hover:text-gray-100 hover:bg-gray-700 text-sm font-normal rounded-md transition-all duration-200 text-center"
                   >
                     Reports
                   </a>
                   <a
                     href="/projects"
-                    className="px-3 py-1.5 text-gray-400 hover:text-gray-100 hover:bg-gray-700 text-sm font-normal rounded-md transition-all duration-200"
+                    className="flex-1 px-3 py-2 text-gray-400 hover:text-gray-100 hover:bg-gray-700 text-sm font-normal rounded-md transition-all duration-200 text-center"
                   >
                     Projects
                   </a>
                   <a
                     href="/settings"
-                    className="px-3 py-1.5 text-gray-400 hover:text-gray-100 hover:bg-gray-700 text-sm font-normal rounded-md transition-all duration-200"
+                    className="flex-1 px-3 py-2 text-gray-400 hover:text-gray-100 hover:bg-gray-700 text-sm font-normal rounded-md transition-all duration-200 text-center"
                   >
                     Settings
                   </a>
                 </div>
+              </div>
 
-                {/* Primary Action - Prominent */}
-                <CSVExportButton 
-                  variant="all"
-                  className="px-4 py-2.5 text-sm font-medium"
-                />
+              {/* Desktop Header - Original Layout */}
+              <div className="hidden md:flex justify-between items-start">
+                <div>
+                  <h1 className="text-3xl font-bold text-gray-100 mb-2">
+                    TimeTrackr
+                  </h1>
+                  <p className="text-gray-400">
+                    Track your time locally and privately
+                  </p>
+                </div>
+                
+                <div className="flex items-center gap-4">
+                  {/* Secondary Navigation - Lightweight */}
+                  <div className="flex gap-1">
+                    <a
+                      href="/reports"
+                      className="px-3 py-1.5 text-gray-400 hover:text-gray-100 hover:bg-gray-700 text-sm font-normal rounded-md transition-all duration-200"
+                    >
+                      Reports
+                    </a>
+                    <a
+                      href="/projects"
+                      className="px-3 py-1.5 text-gray-400 hover:text-gray-100 hover:bg-gray-700 text-sm font-normal rounded-md transition-all duration-200"
+                    >
+                      Projects
+                    </a>
+                    <a
+                      href="/settings"
+                      className="px-3 py-1.5 text-gray-400 hover:text-gray-100 hover:bg-gray-700 text-sm font-normal rounded-md transition-all duration-200"
+                    >
+                      Settings
+                    </a>
+                  </div>
+
+                  {/* Primary Action - Prominent */}
+                  <CSVExportButton 
+                    variant="all"
+                    className="px-4 py-2.5 text-sm font-medium"
+                  />
+                </div>
               </div>
             </div>
 
         {/* Stats Cards */}
         <div className="mb-8">
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* Today's Time Card */}
             <div 
               onClick={() => handleStatCardClick('time')}
-              className="flex-1 min-w-[200px] glass-card rounded-xl p-5 cursor-pointer glass-hover"
+              className="glass-card rounded-xl p-4 sm:p-5 cursor-pointer glass-hover"
             >
               <div className="flex items-center gap-3">
-                <div className="p-2 glass-tint-blue rounded-lg flex items-center justify-center">
-                  <Clock size={20} className="text-blue-300" />
+                <div className="p-2 sm:p-2.5 glass-tint-blue rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Clock size={18} className="text-blue-300 sm:w-5 sm:h-5" />
                 </div>
-                <div>
+                <div className="min-w-0 flex-1">
                   <p className="text-xs font-medium text-gray-400 mb-1 uppercase tracking-wide">
                     Time Today
                   </p>
-                  <p className="text-2xl font-bold text-gray-100">
+                  <p className="text-xl sm:text-2xl font-bold text-gray-100 truncate">
                     {formatDuration(todayEntries.reduce((total, entry) => {
                       if (entry.endTs) {
                         return total + calculateDuration(entry.startTs, entry.endTs)
@@ -121,17 +167,17 @@ export default function Dashboard() {
             {/* Projects Card */}
             <div 
               onClick={() => handleStatCardClick('projects')}
-              className="flex-1 min-w-[200px] glass-card rounded-xl p-5 cursor-pointer glass-hover"
+              className="glass-card rounded-xl p-4 sm:p-5 cursor-pointer glass-hover"
             >
               <div className="flex items-center gap-3">
-                <div className="p-2 glass-tint-green rounded-lg flex items-center justify-center">
-                  <FolderOpen size={20} className="text-green-300" />
+                <div className="p-2 sm:p-2.5 glass-tint-green rounded-lg flex items-center justify-center flex-shrink-0">
+                  <FolderOpen size={18} className="text-green-300 sm:w-5 sm:h-5" />
                 </div>
-                <div>
+                <div className="min-w-0 flex-1">
                   <p className="text-xs font-medium text-gray-400 mb-1 uppercase tracking-wide">
                     Projects
                   </p>
-                  <p className="text-2xl font-bold text-gray-100">
+                  <p className="text-xl sm:text-2xl font-bold text-gray-100">
                     {projects?.length || 0}
                   </p>
                 </div>
@@ -141,17 +187,17 @@ export default function Dashboard() {
             {/* Total Entries Card */}
             <div 
               onClick={() => handleStatCardClick('entries')}
-              className="flex-1 min-w-[200px] glass-card rounded-xl p-5 cursor-pointer glass-hover"
+              className="glass-card rounded-xl p-4 sm:p-5 cursor-pointer glass-hover sm:col-span-2 lg:col-span-1"
             >
               <div className="flex items-center gap-3">
-                <div className="p-2 glass-tint-purple rounded-lg flex items-center justify-center">
-                  <BarChart3 size={20} className="text-purple-300" />
+                <div className="p-2 sm:p-2.5 glass-tint-purple rounded-lg flex items-center justify-center flex-shrink-0">
+                  <BarChart3 size={18} className="text-purple-300 sm:w-5 sm:h-5" />
                 </div>
-                <div>
+                <div className="min-w-0 flex-1">
                   <p className="text-xs font-medium text-gray-400 mb-1 uppercase tracking-wide">
                     Entries
                   </p>
-                  <p className="text-2xl font-bold text-gray-100">
+                  <p className="text-xl sm:text-2xl font-bold text-gray-100">
                     {entries?.length || 0}
                   </p>
                 </div>
@@ -196,10 +242,11 @@ export default function Dashboard() {
                     e.stopPropagation()
                     setShowEntryModal(true)
                   }}
-                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors duration-200"
+                  className="flex items-center gap-2 px-4 py-2 sm:px-4 sm:py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors duration-200 min-h-[44px] touch-manipulation"
                 >
                   <Plus size={16} />
-                  Add Entry
+                  <span className="hidden sm:inline">Add Entry</span>
+                  <span className="sm:hidden">Add</span>
                 </button>
               </div>
 

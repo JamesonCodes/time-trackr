@@ -6,6 +6,8 @@ export default function Home() {
     <>
       <Dashboard />
       <TimerBar />
+      {/* Add bottom padding for mobile navigation */}
+      <div className="h-16 md:hidden" />
     </>
   )
 }

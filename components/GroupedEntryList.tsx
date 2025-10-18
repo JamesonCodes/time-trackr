@@ -313,7 +313,7 @@ export default function GroupedEntryList({ dateFilter, projectFilter }: GroupedE
                         <div className="p-4 bg-gray-800">
                           <div className="space-y-4">
                             {/* Date and Time Row */}
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                               {/* Date */}
                               <div>
                                 <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -339,7 +339,7 @@ export default function GroupedEntryList({ dateFilter, projectFilter }: GroupedE
                               </div>
 
                               {/* End Time */}
-                              <div>
+                              <div className="sm:col-span-2 lg:col-span-1">
                                 <label className="block text-sm font-medium text-gray-300 mb-2">
                                   End Time
                                 </label>
@@ -352,7 +352,7 @@ export default function GroupedEntryList({ dateFilter, projectFilter }: GroupedE
                             </div>
 
                             {/* Project and Note Row */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 gap-4">
                               {/* Project */}
                               <div>
                                 <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -375,22 +375,22 @@ export default function GroupedEntryList({ dateFilter, projectFilter }: GroupedE
                                   onChange={(e) => setEditForm(prev => ({ ...prev, note: e.target.value }))}
                                   placeholder="Optional note..."
                                   rows={3}
-                                  className="w-full px-3 py-2 text-sm border border-gray-600 rounded-lg bg-gray-800 text-gray-100 placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition-colors resize-none"
+                                  className="w-full px-3 py-2 text-sm border border-gray-600 rounded-lg bg-gray-800 text-gray-100 placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition-colors resize-none min-h-[44px]"
                                 />
                               </div>
                             </div>
 
                             {/* Action Buttons */}
-                            <div className="flex gap-3 justify-end">
+                            <div className="flex flex-col sm:flex-row gap-3 justify-end">
                               <button
                                 onClick={() => setEditingEntry(null)}
-                                className="px-4 py-2 text-sm bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
+                                className="px-4 py-3 sm:py-2 text-sm bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors min-h-[44px] touch-manipulation"
                               >
                                 Cancel
                               </button>
                               <button
                                 onClick={() => handleSaveEdit(entry.id)}
-                                className="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                                className="px-4 py-3 sm:py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors min-h-[44px] touch-manipulation"
                               >
                                 Save
                               </button>
@@ -399,46 +399,49 @@ export default function GroupedEntryList({ dateFilter, projectFilter }: GroupedE
                         </div>
                       ) : (
                         <div className="group flex items-center justify-between p-3 bg-gray-700/50 rounded-lg hover:bg-gray-600/50 transition-colors duration-200">
-                          <div className="flex items-center gap-3 flex-1 min-w-0">
-                            <div
-                              className="w-3 h-3 rounded-full flex-shrink-0"
-                              style={{ backgroundColor: getProjectColor(entry.projectId) }}
-                            />
-                            <div className="min-w-0 flex-1">
-                              <div className="flex items-center gap-2 mb-1">
-                                <span className="text-sm font-medium text-gray-100 truncate">
-                                  {getProjectName(entry.projectId)}
-                                </span>
-                                <span className="text-xs text-gray-400">
-                                  {formatTime(entry.startTs)} - {entry.endTs ? formatTime(entry.endTs) : 'Running'}
-                                </span>
-                              </div>
-                              {entry.note && (
-                                <div className="text-xs text-gray-300 truncate">
-                                  {entry.note}
+                          {/* Mobile Layout */}
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                            <div className="flex items-center gap-3 min-w-0 flex-1">
+                              <div
+                                className="w-3 h-3 rounded-full flex-shrink-0"
+                                style={{ backgroundColor: getProjectColor(entry.projectId) }}
+                              />
+                              <div className="min-w-0 flex-1">
+                                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mb-1">
+                                  <span className="text-sm font-medium text-gray-100 truncate">
+                                    {getProjectName(entry.projectId)}
+                                  </span>
+                                  <span className="text-xs text-gray-400">
+                                    {formatTime(entry.startTs)} - {entry.endTs ? formatTime(entry.endTs) : 'Running'}
+                                  </span>
                                 </div>
-                              )}
+                                {entry.note && (
+                                  <div className="text-xs text-gray-300 truncate">
+                                    {entry.note}
+                                  </div>
+                                )}
+                              </div>
                             </div>
                             <div className="text-sm font-mono text-gray-200 flex-shrink-0">
                               {entry.endTs ? formatDuration(calculateDuration(entry.startTs, entry.endTs)) : 'Running...'}
                             </div>
                           </div>
                           
-                          {/* Action Buttons */}
-                          <div className="flex items-center gap-1 ml-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                          {/* Action Buttons - Always visible on mobile */}
+                          <div className="flex items-center gap-1 ml-3 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-200">
                             <button
                               onClick={() => handleEdit(entry)}
-                              className="p-1.5 text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 rounded transition-colors duration-200"
+                              className="p-2 sm:p-1.5 text-gray-400 hover:text-blue-400 hover:bg-blue-500/10 rounded transition-colors duration-200 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 touch-manipulation"
                               title="Edit entry"
                             >
-                              <Edit size={14} />
+                              <Edit size={16} className="sm:w-3.5 sm:h-3.5" />
                             </button>
                             <button
                               onClick={() => handleDelete(entry.id)}
-                              className="p-1.5 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors duration-200"
+                              className="p-2 sm:p-1.5 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors duration-200 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 touch-manipulation"
                               title="Delete entry"
                             >
-                              <Trash2 size={14} />
+                              <Trash2 size={16} className="sm:w-3.5 sm:h-3.5" />
                             </button>
                           </div>
                         </div>
