@@ -7,6 +7,7 @@ import { calculateDuration } from '@/lib/utils/time'
 import { Clock, TrendingUp, Calendar, ChevronDown, ChevronRight, Edit, Trash2 } from 'lucide-react'
 import WeekSelector from './WeekSelector'
 import WeekTimelineBar from './WeekTimelineBar'
+import TimePicker from './TimePicker'
 
 interface DaySummary {
   date: Date
@@ -142,9 +143,21 @@ export default function ReportTable({ selectedWeek, onWeekChange, selectedProjec
   const handleEditEntry = (entryId: string) => {
     const entry = entries?.find(e => e.id === entryId)
     if (entry) {
+      // Convert to 12-hour format for TimePicker
+      const startDate = new Date(entry.startTs)
+      const endDate = entry.endTs ? new Date(entry.endTs) : null
+      
+      const formatTimeForPicker = (date: Date) => {
+        const hour = date.getHours()
+        const minute = date.getMinutes()
+        const period = hour >= 12 ? 'PM' : 'AM'
+        const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour
+        return `${displayHour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')} ${period}`
+      }
+
       setEditFormData({
-        startTime: format(new Date(entry.startTs), 'HH:mm'),
-        endTime: entry.endTs ? format(new Date(entry.endTs), 'HH:mm') : '',
+        startTime: formatTimeForPicker(startDate),
+        endTime: endDate ? formatTimeForPicker(endDate) : '',
         note: entry.note || '',
         projectId: entry.projectId || ''
       })
@@ -162,9 +175,24 @@ export default function ReportTable({ selectedWeek, onWeekChange, selectedProjec
       // Get the original date from the entry
       const originalDate = new Date(entry.startTs).toISOString().split('T')[0]
       
+      // Convert TimePicker format back to 24-hour format
+      const convertTimePickerTo24Hour = (timeString: string) => {
+        const [time, period] = timeString.split(' ')
+        const [hour, minute] = time.split(':')
+        let hour24 = parseInt(hour)
+        
+        if (period === 'PM' && hour24 !== 12) {
+          hour24 += 12
+        } else if (period === 'AM' && hour24 === 12) {
+          hour24 = 0
+        }
+        
+        return `${hour24.toString().padStart(2, '0')}:${minute}:00.000Z`
+      }
+      
       // Create new timestamps with the edited times
-      const newStartTs = `${originalDate}T${editFormData.startTime}:00.000Z`
-      const newEndTs = editFormData.endTime ? `${originalDate}T${editFormData.endTime}:00.000Z` : undefined
+      const newStartTs = `${originalDate}T${convertTimePickerTo24Hour(editFormData.startTime)}`
+      const newEndTs = editFormData.endTime ? `${originalDate}T${convertTimePickerTo24Hour(editFormData.endTime)}` : undefined
 
       // Update the entry
       await entryService.update(editingEntry, {
@@ -400,20 +428,20 @@ export default function ReportTable({ selectedWeek, onWeekChange, selectedProjec
                                 <div className="grid grid-cols-2 gap-2">
                                   <div>
                                     <label className="text-xs text-gray-400 mb-1 block">Start Time</label>
-                                    <input
-                                      type="time"
+                                    <TimePicker
                                       value={editFormData.startTime}
-                                      onChange={(e) => setEditFormData(prev => ({ ...prev, startTime: e.target.value }))}
-                                      className="w-full px-2 py-1 text-xs border border-gray-600 rounded bg-gray-800 text-gray-100 focus:border-blue-500 focus:outline-none"
+                                      onChange={(value) => setEditFormData(prev => ({ ...prev, startTime: value }))}
+                                      placeholder="Select start time"
+                                      className="text-xs"
                                     />
                                   </div>
                                   <div>
                                     <label className="text-xs text-gray-400 mb-1 block">End Time</label>
-                                    <input
-                                      type="time"
+                                    <TimePicker
                                       value={editFormData.endTime}
-                                      onChange={(e) => setEditFormData(prev => ({ ...prev, endTime: e.target.value }))}
-                                      className="w-full px-2 py-1 text-xs border border-gray-600 rounded bg-gray-800 text-gray-100 focus:border-blue-500 focus:outline-none"
+                                      onChange={(value) => setEditFormData(prev => ({ ...prev, endTime: value }))}
+                                      placeholder="Select end time"
+                                      className="text-xs"
                                     />
                                   </div>
                                 </div>
