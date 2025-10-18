@@ -31,16 +31,13 @@ export default function Dashboard() {
     return project?.name || 'Unknown Project'
   }
 
-  const handleStatCardClick = (type: 'time' | 'projects' | 'entries') => {
+  const handleStatCardClick = (type: 'time' | 'projects') => {
     switch (type) {
       case 'time':
         router.push('/reports?filter=today')
         break
       case 'projects':
         router.push('/projects')
-        break
-      case 'entries':
-        router.push('/reports?scrollTo=daily-breakdown')
         break
     }
   }
@@ -182,8 +179,7 @@ export default function Dashboard() {
             {/* Today's Entries Card */}
             <div 
               id="todays-entries" 
-              className="glass-card rounded-xl mb-8 cursor-pointer hover:bg-gray-700/50 transition-colors duration-200"
-              onClick={() => handleStatCardClick('entries')}
+              className="glass-card rounded-xl mb-8"
             >
               {/* Card Header */}
               <div className="flex justify-between items-center px-6 py-5 border-b border-gray-700">
