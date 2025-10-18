@@ -209,7 +209,7 @@ export default function TimePicker({
         >
           <div className="flex">
             {/* Hours Column */}
-            <div className="flex-1 p-3 glass-subtle rounded-l-xl">
+            <div className="flex-1 p-3 rounded-l-xl">
               <div className="text-xs text-gray-300 text-center mb-3 font-medium tracking-wider">HOUR</div>
               <div className="max-h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
                 {hours.map((hour) => (
@@ -222,7 +222,7 @@ export default function TimePicker({
                     className={`
                       px-3 py-2 text-center text-sm rounded-lg cursor-pointer transition-all duration-200
                         ${selectedTime.hour === hour
-                          ? 'glass-tint-blue text-white font-medium shadow-lg shadow-blue-500/25'
+                          ? 'bg-blue-500/20 text-blue-300 font-medium border border-blue-500/30'
                           : 'text-gray-200 hover:glass-subtle hover:text-white'
                         }
                     `}
@@ -234,7 +234,7 @@ export default function TimePicker({
             </div>
 
             {/* Minutes Column */}
-            <div className="flex-1 p-3 glass-subtle border-l border-white/10">
+            <div className="flex-1 p-3 border-l border-white/10">
               <div className="text-xs text-gray-300 text-center mb-3 font-medium tracking-wider">MIN</div>
               <div className="max-h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
                 {minutes.map((minute) => (
@@ -247,7 +247,7 @@ export default function TimePicker({
                     className={`
                       px-3 py-2 text-center text-sm rounded-lg cursor-pointer transition-all duration-200
                         ${selectedTime.minute === minute
-                          ? 'glass-tint-blue text-white font-medium shadow-lg shadow-blue-500/25'
+                          ? 'bg-blue-500/20 text-blue-300 font-medium border border-blue-500/30'
                           : 'text-gray-200 hover:glass-subtle hover:text-white'
                         }
                     `}
@@ -259,7 +259,7 @@ export default function TimePicker({
             </div>
 
             {/* Period Column */}
-            <div className="flex-1 p-3 glass-subtle border-l border-white/10 rounded-r-xl">
+            <div className="flex-1 p-3 border-l border-white/10 rounded-r-xl">
               <div className="text-xs text-gray-300 text-center mb-3 font-medium tracking-wider">PERIOD</div>
               <div className="max-h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
                 {periods.map((period) => (
@@ -272,7 +272,7 @@ export default function TimePicker({
                     className={`
                       px-3 py-2 text-center text-sm rounded-lg cursor-pointer transition-all duration-200
                         ${selectedTime.period === period
-                          ? 'glass-tint-blue text-white font-medium shadow-lg shadow-blue-500/25'
+                          ? 'bg-blue-500/20 text-blue-300 font-medium border border-blue-500/30'
                           : 'text-gray-200 hover:glass-subtle hover:text-white'
                         }
                     `}
@@ -285,7 +285,7 @@ export default function TimePicker({
           </div>
 
           {/* Quick Actions */}
-          <div className="border-t border-white/10 p-3 glass-subtle rounded-b-xl">
+          <div className="border-t border-white/10 p-3 rounded-b-xl">
             <div className="flex gap-2">
                 <button
                   onClick={(e) => {
