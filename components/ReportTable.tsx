@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { useEntries, useProjects } from '@/lib/db'
 import { format, startOfWeek, endOfWeek, isWithinInterval, eachDayOfInterval, isSameDay } from 'date-fns'
-import { Clock, TrendingUp, Calendar, FolderOpen, ChevronDown, ChevronRight } from 'lucide-react'
+import { Clock, TrendingUp, Calendar, ChevronDown, ChevronRight } from 'lucide-react'
 import WeekSelector from './WeekSelector'
 import WeekTimelineBar from './WeekTimelineBar'
 
@@ -22,7 +22,6 @@ interface ReportTableProps {
 export default function ReportTable({ selectedWeek, onWeekChange }: ReportTableProps) {
   const [weekData, setWeekData] = useState<DaySummary[]>([])
   const [totalWeekMinutes, setTotalWeekMinutes] = useState(0)
-  const [projectTotals, setProjectTotals] = useState<Record<string, number>>({})
   const [expandedDays, setExpandedDays] = useState<Set<string>>(new Set())
 
   const entries = useEntries()
@@ -89,15 +88,6 @@ export default function ReportTable({ selectedWeek, onWeekChange }: ReportTableP
     const totalMinutes = daySummaries.reduce((total, day) => total + day.totalMinutes, 0)
     setTotalWeekMinutes(totalMinutes)
 
-    // Calculate project totals
-    const projectTotals: Record<string, number> = {}
-    daySummaries.forEach(day => {
-      Object.entries(day.projectBreakdown).forEach(([projectName, data]) => {
-        projectTotals[projectName] = (projectTotals[projectName] || 0) + data.minutes
-      })
-    })
-    setProjectTotals(projectTotals)
-
   }, [entries, projects, selectedWeek])
 
   const toggleDay = (dateString: string) => {
@@ -123,11 +113,6 @@ export default function ReportTable({ selectedWeek, onWeekChange }: ReportTableP
     return (minutes / 60).toFixed(1)
   }
 
-  const getProjectColor = (projectName: string) => {
-    if (projectName === 'No Project') return '#6b7280'
-    const project = projects?.find(p => p.name === projectName)
-    return project?.color || '#6b7280'
-  }
 
   if (!entries || entries.length === 0) {
     return (
@@ -168,25 +153,6 @@ export default function ReportTable({ selectedWeek, onWeekChange }: ReportTableP
             </div>
           </div>
 
-          {/* Projects Card */}
-          <div className="flex-1 min-w-[200px] glass-card rounded-xl p-5">
-            <div className="flex items-center gap-3">
-              <div className="p-2 glass-tint-green rounded-lg flex items-center justify-center">
-                <FolderOpen size={20} className="text-green-300" />
-              </div>
-              <div>
-                <p className="text-xs font-medium text-gray-400 mb-1 uppercase tracking-wide">
-                  Projects
-                </p>
-                <p className="text-2xl font-bold text-gray-100">
-                  {Object.keys(projectTotals).length}
-                </p>
-                <p className="text-xs text-gray-400">
-                  active this week
-                </p>
-              </div>
-            </div>
-          </div>
 
           {/* Daily Average Card */}
           <div className="flex-1 min-w-[200px] glass-card rounded-xl p-5">
@@ -318,66 +284,6 @@ export default function ReportTable({ selectedWeek, onWeekChange }: ReportTableP
         </div>
       </div>
 
-      {/* Project Summary - Quaternary Section */}
-      {Object.keys(projectTotals).length > 0 && (
-        <div className="glass-card rounded-xl p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-gray-100">
-              Project Summary
-            </h3>
-            <div className="text-xs text-gray-500">
-              Bar length represents total tracked time this week
-            </div>
-          </div>
-          
-          <div className="space-y-3">
-            {Object.entries(projectTotals)
-              .sort(([,a], [,b]) => b - a)
-              .map(([projectName, minutes]) => {
-                const maxMinutes = Math.max(...Object.values(projectTotals))
-                const percentage = maxMinutes > 0 ? (minutes / maxMinutes) * 100 : 0
-                
-                return (
-                  <div
-                    key={projectName}
-                    className="glass-subtle rounded-lg p-4 glass-hover"
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-3">
-                        <div
-                          className="w-3 h-3 rounded-full"
-                          style={{ backgroundColor: getProjectColor(projectName) }}
-                        />
-                        <span className="text-sm font-medium text-gray-100">
-                          {projectName}
-                        </span>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-sm font-bold text-gray-100">
-                          {formatDuration(minutes)}
-                        </div>
-                        <div className="text-xs text-gray-400">
-                          {formatDurationHours(minutes)}h
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {/* Progress Bar */}
-                    <div className="w-full bg-gray-600 rounded-full h-2">
-                      <div
-                        className="h-2 rounded-full transition-all duration-300"
-                        style={{
-                          width: `${percentage}%`,
-                          backgroundColor: getProjectColor(projectName)
-                        }}
-                      />
-                    </div>
-                  </div>
-                )
-              })}
-          </div>
-        </div>
-      )}
     </div>
   )
 }
