@@ -2,6 +2,8 @@
 
 A modern, local-first time tracking app built with Next.js, TypeScript, and a beautiful glass design system. Fast, private, and works entirely offline.
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Try%20TimeTrackr-blue?style=for-the-badge&logo=vercel)](https://studio--studio-865518527-bc862.us-central1.hosted.app/)
+
 ![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat-square&logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat-square&logo=typescript)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3-38B2AC?style=flat-square&logo=tailwind-css)
@@ -32,6 +34,8 @@ TimeTrackr features a cohesive glass design system with:
 - **Professional UI**: Clean, modern interface optimized for productivity
 
 ## 🚀 Quick Start
+
+**Want to try it first?** [Visit the live demo](https://studio--studio-865518527-bc862.us-central1.hosted.app/) to see TimeTrackr in action!
 
 ### Prerequisites
 
