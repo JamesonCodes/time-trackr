@@ -56,10 +56,10 @@ export default function TimerBar() {
         {/* Mobile FAB */}
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className={`fixed bottom-20 right-6 z-50 w-16 h-16 rounded-full glass-strong transition-all duration-300 touch-manipulation ${
+          className={`fixed bottom-20 right-6 z-50 w-16 h-16 rounded-full transition-all duration-300 touch-manipulation shadow-2xl ${
             timer.isRunning 
-              ? 'glass-tint-green shadow-green-500/30' 
-              : 'glass-tint-blue shadow-blue-500/30'
+              ? 'bg-green-600 hover:bg-green-700 shadow-green-500/50' 
+              : 'bg-blue-600 hover:bg-blue-700 shadow-blue-500/50'
           }`}
         >
           <div className="flex flex-col items-center justify-center text-white">
