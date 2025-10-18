@@ -332,20 +332,20 @@ export default function ProjectManagement() {
             </div>
 
             {/* Actions */}
-            <div className="flex gap-2">
+            <div className="flex gap-1.5">
               <button
                 onClick={() => startEdit(project)}
-                className="p-1.5 glass-subtle border border-gray-500 rounded text-gray-400 cursor-pointer hover:glass-card"
+                className="p-2 glass-subtle border border-gray-500 rounded-md text-gray-400 cursor-pointer hover:glass-card hover:text-gray-100 transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center"
                 title="Edit project"
               >
-                <Edit size={14} />
+                <Edit size={16} />
               </button>
               <button
                 onClick={() => handleDelete(project.id)}
-                className="p-1.5 glass-subtle border border-gray-500 rounded text-red-400 cursor-pointer hover:glass-card"
+                className="p-2 glass-subtle border border-gray-500 rounded-md text-red-400 cursor-pointer hover:glass-card hover:text-red-300 transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center"
                 title="Delete project"
               >
-                <Trash2 size={14} />
+                <Trash2 size={16} />
               </button>
             </div>
           </div>
