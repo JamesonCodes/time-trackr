@@ -7,6 +7,7 @@ import { getLastProject, setLastProject } from '@/lib/utils/storage'
 import { Plus, X } from 'lucide-react'
 import ProjectSelector from './ProjectSelector'
 import TimePicker from './TimePicker'
+import DatePicker from './DatePicker'
 
 interface EntryFormProps {
   onEntryCreated?: () => void
@@ -27,7 +28,6 @@ export default function EntryForm({ onEntryCreated, onCancel, initialDate }: Ent
   const [errors, setErrors] = useState<Record<string, string>>({})
   const projectRef = useRef<HTMLDivElement>(null)
   const noteRef = useRef<HTMLInputElement>(null)
-  const dateRef = useRef<HTMLInputElement>(null)
 
   const projects = useProjects()
 
@@ -236,24 +236,11 @@ export default function EntryForm({ onEntryCreated, onCancel, initialDate }: Ent
           <label className="block text-sm font-medium text-gray-300 mb-2">
             Date
           </label>
-          <div
-            className="relative cursor-pointer"
-            onClick={() => {
-              const input = document.getElementById('startDate') as HTMLInputElement
-              input?.showPicker?.() || input?.focus()
-            }}
-          >
-            <input
-              ref={dateRef}
-              id="startDate"
-              type="date"
-              value={formData.startDate}
-              onChange={(e) => setFormData(prev => ({ ...prev, startDate: e.target.value }))}
-              required
-              className="w-full px-3 py-2 text-sm border border-gray-600 rounded-lg bg-gray-800 text-gray-100 cursor-pointer focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition-colors pointer-events-none"
-              tabIndex={3}
-            />
-          </div>
+          <DatePicker
+            value={formData.startDate}
+            onChange={(value) => setFormData(prev => ({ ...prev, startDate: value }))}
+            placeholder="Select date"
+          />
         </div>
 
         {/* Start Time */}

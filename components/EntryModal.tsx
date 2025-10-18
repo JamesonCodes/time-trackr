@@ -34,8 +34,9 @@ export default function EntryModal({ isOpen, onClose, onEntryCreated }: EntryMod
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as Node
       const isTimePicker = (target as Element)?.closest('[data-time-picker]')
+      const isDatePicker = (target as Element)?.closest('[data-date-picker]')
       
-      if (modalRef.current && !modalRef.current.contains(target) && !isTimePicker) {
+      if (modalRef.current && !modalRef.current.contains(target) && !isTimePicker && !isDatePicker) {
         onClose()
       }
     }
