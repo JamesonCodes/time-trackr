@@ -447,12 +447,12 @@ export default function ReportTable({ selectedWeek, onWeekChange, selectedProjec
                                 </div>
                                 <div>
                                   <label className="text-xs text-gray-400 mb-1 block">Note</label>
-                                  <input
-                                    type="text"
+                                  <textarea
                                     value={editFormData.note}
                                     onChange={(e) => setEditFormData(prev => ({ ...prev, note: e.target.value }))}
                                     placeholder="Optional note..."
-                                    className="w-full px-2 py-1 text-xs border border-gray-600 rounded bg-gray-800 text-gray-100 focus:border-blue-500 focus:outline-none"
+                                    rows={3}
+                                    className="w-full px-3 py-2 text-sm border border-gray-600 rounded-lg bg-gray-800 text-gray-100 placeholder-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition-colors resize-none"
                                   />
                                 </div>
                                 <div className="flex gap-2">
