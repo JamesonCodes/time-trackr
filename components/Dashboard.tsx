@@ -50,46 +50,15 @@ export default function Dashboard() {
       <div className="container mx-auto px-4 py-8">
             {/* Header */}
             <div className="mb-8">
-              {/* Mobile Header - Stacked Layout */}
+              {/* Mobile Header - Clean Layout */}
               <div className="block md:hidden">
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <h1 className="text-2xl font-bold text-gray-100 mb-1">
-                      TimeTrackr
-                    </h1>
-                    <p className="text-sm text-gray-400">
-                      Track your time locally and privately
-                    </p>
-                  </div>
-                  
-                  {/* Mobile Menu Button */}
-                  <button className="p-2 text-gray-400 hover:text-gray-100 hover:bg-gray-700 rounded-lg transition-colors">
-                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M3 12h18M3 6h18M3 18h18"/>
-                    </svg>
-                  </button>
-                </div>
-                
-                {/* Mobile Navigation */}
-                <div className="flex gap-1 mb-4">
-                  <a
-                    href="/reports"
-                    className="flex-1 px-3 py-2 text-gray-400 hover:text-gray-100 hover:bg-gray-700 text-sm font-normal rounded-md transition-all duration-200 text-center"
-                  >
-                    Reports
-                  </a>
-                  <a
-                    href="/projects"
-                    className="flex-1 px-3 py-2 text-gray-400 hover:text-gray-100 hover:bg-gray-700 text-sm font-normal rounded-md transition-all duration-200 text-center"
-                  >
-                    Projects
-                  </a>
-                  <a
-                    href="/settings"
-                    className="flex-1 px-3 py-2 text-gray-400 hover:text-gray-100 hover:bg-gray-700 text-sm font-normal rounded-md transition-all duration-200 text-center"
-                  >
-                    Settings
-                  </a>
+                <div className="mb-4">
+                  <h1 className="text-2xl font-bold text-gray-100 mb-1">
+                    TimeTrackr
+                  </h1>
+                  <p className="text-sm text-gray-400">
+                    Track your time locally and privately
+                  </p>
                 </div>
               </div>
 

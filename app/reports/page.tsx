@@ -36,27 +36,28 @@ export default function ReportsPage() {
         <div className="mb-8">
           {/* Mobile Header */}
           <div className="block md:hidden mb-6">
-            <div className="flex items-center justify-between mb-4">
+            {/* Back Button */}
+            <div className="mb-4">
               <Link
                 href="/"
-                className="flex items-center gap-2 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-gray-100 rounded-lg text-sm font-medium border border-gray-600 transition-colors duration-200 min-h-[44px]"
+                className="inline-flex items-center gap-2 px-4 py-3 bg-gray-700 hover:bg-gray-600 text-gray-100 rounded-lg text-sm font-medium border border-gray-600 transition-colors duration-200 min-h-[44px]"
               >
                 <ArrowLeft size={16} />
-                <span className="hidden sm:inline">Back to Dashboard</span>
-                <span className="sm:hidden">Back</span>
+                Back to Dashboard
               </Link>
-              
-              <div className="flex gap-1">
-                <CSVExportButton 
-                  variant="week" 
-                  weekStart={selectedWeek}
-                  className="px-2 py-2 text-xs"
-                />
-                <CSVExportButton 
-                  variant="all"
-                  className="px-2 py-2 text-xs"
-                />
-              </div>
+            </div>
+            
+            {/* Export Buttons - Stacked */}
+            <div className="flex flex-col sm:flex-row gap-3 mb-4">
+              <CSVExportButton 
+                variant="week" 
+                weekStart={selectedWeek}
+                className="flex-1 min-h-[44px]"
+              />
+              <CSVExportButton 
+                variant="all"
+                className="flex-1 min-h-[44px]"
+              />
             </div>
             
             <div className="flex items-center gap-3 mb-2">
