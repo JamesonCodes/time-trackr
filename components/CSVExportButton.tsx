@@ -10,13 +10,15 @@ interface CSVExportButtonProps {
   weekStart?: Date
   disabled?: boolean
   style?: React.CSSProperties
+  className?: string
 }
 
 export default function CSVExportButton({ 
   variant = 'default', 
   weekStart, 
   disabled = false,
-  style = {}
+  style = {},
+  className = ''
 }: CSVExportButtonProps) {
   const [isExporting, setIsExporting] = useState(false)
   const entries = useEntries()
@@ -98,6 +100,7 @@ export default function CSVExportButton({
         onClick={handleExport}
         disabled={disabled || isExporting}
         style={defaultStyle}
+        className={className}
         onMouseEnter={(e) => {
           if (!disabled && !isExporting) {
             e.currentTarget.style.backgroundColor = '#059669'
