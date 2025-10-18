@@ -1,7 +1,8 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import { ArrowLeft, BarChart3 } from 'lucide-react'
 import ReportTable from '@/components/ReportTable'
 import WeekSelector from '@/components/WeekSelector'
@@ -9,6 +10,23 @@ import CSVExportButton from '@/components/CSVExportButton'
 
 export default function ReportsPage() {
   const [selectedWeek, setSelectedWeek] = useState(new Date())
+  const searchParams = useSearchParams()
+
+  // Auto-scroll to Daily Breakdown section if scrollTo parameter is present
+  useEffect(() => {
+    const scrollTo = searchParams.get('scrollTo')
+    if (scrollTo === 'daily-breakdown') {
+      setTimeout(() => {
+        const element = document.getElementById('daily-breakdown')
+        if (element) {
+          element.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start'
+          })
+        }
+      }, 100)
+    }
+  }, [searchParams])
 
   return (
     <div className="min-h-screen bg-gray-900 pt-20">

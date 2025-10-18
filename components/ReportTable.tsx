@@ -222,7 +222,7 @@ export default function ReportTable({ selectedWeek, onWeekChange }: ReportTableP
       </div>
 
       {/* Daily Breakdown - Tertiary Section */}
-      <div className="glass-card rounded-xl p-6 mb-6">
+      <div id="daily-breakdown" className="glass-card rounded-xl p-6 mb-6">
         <h3 className="text-lg font-semibold text-gray-100 mb-4">
           Daily Breakdown
         </h3>

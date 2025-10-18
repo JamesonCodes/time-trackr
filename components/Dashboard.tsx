@@ -40,13 +40,7 @@ export default function Dashboard() {
         router.push('/projects')
         break
       case 'entries':
-        // Scroll to entries section or navigate to reports
-        const entriesSection = document.getElementById('todays-entries')
-        if (entriesSection) {
-          entriesSection.scrollIntoView({ behavior: 'smooth' })
-        } else {
-          router.push('/reports?filter=today')
-        }
+        router.push('/reports?scrollTo=daily-breakdown')
         break
     }
   }
@@ -186,7 +180,11 @@ export default function Dashboard() {
         )}
 
             {/* Today's Entries Card */}
-            <div id="todays-entries" className="glass-card rounded-xl mb-8">
+            <div 
+              id="todays-entries" 
+              className="glass-card rounded-xl mb-8 cursor-pointer hover:bg-gray-700/50 transition-colors duration-200"
+              onClick={() => handleStatCardClick('entries')}
+            >
               {/* Card Header */}
               <div className="flex justify-between items-center px-6 py-5 border-b border-gray-700">
                 <h2 className="text-lg font-semibold text-gray-100">
@@ -195,7 +193,10 @@ export default function Dashboard() {
                 
                 {/* Add Entry Button */}
                 <button
-                  onClick={() => setShowEntryModal(true)}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setShowEntryModal(true)
+                  }}
                   className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors duration-200"
                 >
                   <Plus size={16} />
