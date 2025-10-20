@@ -1,7 +1,7 @@
 # TimeTrackr ⏱️
 
 <div align="center">
-  <img src="assets/timetrackr-logo-full.svg" alt="TimeTrackr Logo" width="400">
+  <img src="assets/timetrackr-logo-full.svg" alt="TimeTrackr Logo">
 </div>
 
 A modern, local-first time tracking app built with Next.js, TypeScript, and a beautiful glass design system. Fast, private, and works entirely offline.
