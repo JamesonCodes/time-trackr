@@ -1,5 +1,9 @@
 # TimeTrackr ⏱️
 
+<div align="center">
+  <img src="assets/timetrackr-logo-full.svg" alt="TimeTrackr Logo" width="400">
+</div>
+
 A modern, local-first time tracking app built with Next.js, TypeScript, and a beautiful glass design system. Fast, private, and works entirely offline.
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Try%20TimeTrackr-blue?style=for-the-badge&logo=vercel)](https://studio--studio-865518527-bc862.us-central1.hosted.app/)
